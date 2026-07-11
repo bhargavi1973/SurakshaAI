@@ -312,7 +312,10 @@
     font-size:10.5px;color:var(--text-dim);font-weight:400;text-transform:none;
     letter-spacing:normal;margin-left:4px;
   }
+  .export-btn-group{display:flex;gap:6px;flex-wrap:wrap;}
+  .export-btn-group .export-btn{padding:6px 9px;font-size:10.5px;}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -592,7 +595,7 @@ en: {
   col_id:"Campaign ID", col_type:"Scam type / signature", col_severity:"Severity", col_reports:"Reports", col_export:"Export",
   empty_clusters:"No active campaigns detected yet. Campaigns form automatically when 2+ citizens report the same number, or a single number is reported as high-risk.",
   section_feed:"Recent Reports (raw feed)", empty_feed:"No reports submitted yet in this session.",
-  multiple_numbers:"multiple numbers", unknown_number:"unknown", unclassified:"Unclassified", packet_btn:"⬇ Packet",
+  multiple_numbers:"multiple numbers", unknown_number:"unknown", unclassified:"Unclassified", packet_btn:"⬇ Packet", packet_pdf_btn:"⬇ PDF",
   report_count_suffix:"report", reports_count_suffix:"reports"
 },
 hi: {
@@ -624,7 +627,7 @@ hi: {
   col_id:"अभियान आईडी", col_type:"धोखाधड़ी का प्रकार / संकेत", col_severity:"गंभीरता", col_reports:"रिपोर्टें", col_export:"निर्यात",
   empty_clusters:"अभी तक कोई सक्रिय अभियान नहीं मिला। जब 2+ नागरिक एक ही नंबर की रिपोर्ट करते हैं, या किसी एक नंबर को उच्च-जोखिम के रूप में रिपोर्ट किया जाता है, तो अभियान अपने आप बनते हैं।",
   section_feed:"हाल की रिपोर्टें (कच्चा फीड)", empty_feed:"इस सत्र में अभी तक कोई रिपोर्ट सबमिट नहीं हुई।",
-  multiple_numbers:"कई नंबर", unknown_number:"अज्ञात", unclassified:"अवर्गीकृत", packet_btn:"⬇ पैकेट",
+  multiple_numbers:"कई नंबर", unknown_number:"अज्ञात", unclassified:"अवर्गीकृत", packet_btn:"⬇ पैकेट", packet_pdf_btn:"⬇ PDF",
   report_count_suffix:"रिपोर्ट", reports_count_suffix:"रिपोर्टें"
 },
 ta: {
@@ -656,7 +659,7 @@ ta: {
   col_id:"பிரச்சார ஐடி", col_type:"மோசடி வகை", col_severity:"தீவிரம்", col_reports:"புகார்கள்", col_export:"ஏற்றுமதி",
   empty_clusters:"இதுவரை செயலில் உள்ள பிரச்சாரங்கள் கண்டறியப்படவில்லை.",
   section_feed:"சமீபத்திய புகார்கள்", empty_feed:"இந்த அமர்வில் இதுவரை புகார்கள் எதுவும் சமர்ப்பிக்கப்படவில்லை.",
-  multiple_numbers:"பல எண்கள்", unknown_number:"தெரியவில்லை", unclassified:"வகைப்படுத்தப்படாதது", packet_btn:"⬇ பாக்கெட்",
+  multiple_numbers:"பல எண்கள்", unknown_number:"தெரியவில்லை", unclassified:"வகைப்படுத்தப்படாதது", packet_btn:"⬇ பாக்கெட்", packet_pdf_btn:"⬇ PDF",
   report_count_suffix:"புகார்", reports_count_suffix:"புகார்கள்"
 },
 te: {
@@ -688,7 +691,7 @@ te: {
   col_id:"ప్రచార ఐడి", col_type:"మోసం రకం", col_severity:"తీవ్రత", col_reports:"నివేదికలు", col_export:"ఎగుమతి",
   empty_clusters:"ఇంకా క్రియాశీల ప్రచారాలు గుర్తించబడలేదు.",
   section_feed:"ఇటీవలి నివేదికలు", empty_feed:"ఈ సెషన్‌లో ఇంకా నివేదికలు సమర్పించబడలేదు.",
-  multiple_numbers:"బహుళ నంబర్లు", unknown_number:"తెలియదు", unclassified:"వర్గీకరించబడలేదు", packet_btn:"⬇ ప్యాకెట్",
+  multiple_numbers:"బహుళ నంబర్లు", unknown_number:"తెలియదు", unclassified:"వర్గీకరించబడలేదు", packet_btn:"⬇ ప్యాకెట్", packet_pdf_btn:"⬇ PDF",
   report_count_suffix:"నివేదిక", reports_count_suffix:"నివేదికలు"
 },
 bn: {
@@ -720,7 +723,7 @@ bn: {
   col_id:"প্রচারণা আইডি", col_type:"প্রতারণার ধরন", col_severity:"তীব্রতা", col_reports:"রিপোর্ট", col_export:"রপ্তানি",
   empty_clusters:"এখনও কোনো সক্রিয় প্রচারণা সনাক্ত হয়নি।",
   section_feed:"সাম্প্রতিক রিপোর্ট", empty_feed:"এই সেশনে এখনও কোনো রিপোর্ট জমা দেওয়া হয়নি।",
-  multiple_numbers:"একাধিক নম্বর", unknown_number:"অজানা", unclassified:"অশ্রেণীবদ্ধ", packet_btn:"⬇ প্যাকেট",
+  multiple_numbers:"একাধিক নম্বর", unknown_number:"অজানা", unclassified:"অশ্রেণীবদ্ধ", packet_btn:"⬇ প্যাকেট", packet_pdf_btn:"⬇ PDF",
   report_count_suffix:"রিপোর্ট", reports_count_suffix:"রিপোর্ট"
 },
 mr: {
@@ -752,7 +755,7 @@ mr: {
   col_id:"मोहीम आयडी", col_type:"फसवणुकीचा प्रकार", col_severity:"तीव्रता", col_reports:"तक्रारी", col_export:"निर्यात",
   empty_clusters:"अद्याप कोणतीही सक्रिय मोहीम आढळली नाही.",
   section_feed:"अलीकडील तक्रारी", empty_feed:"या सत्रात अद्याप कोणतीही तक्रार सादर केलेली नाही.",
-  multiple_numbers:"अनेक नंबर", unknown_number:"अज्ञात", unclassified:"अवर्गीकृत", packet_btn:"⬇ पॅकेट",
+  multiple_numbers:"अनेक नंबर", unknown_number:"अज्ञात", unclassified:"अवर्गीकृत", packet_btn:"⬇ पॅकेट", packet_pdf_btn:"⬇ PDF",
   report_count_suffix:"तक्रार", reports_count_suffix:"तक्रारी"
 },
 kn: {
@@ -784,7 +787,7 @@ kn: {
   col_id:"ಅಭಿಯಾನ ಐಡಿ", col_type:"ವಂಚನೆಯ ಪ್ರಕಾರ", col_severity:"ತೀವ್ರತೆ", col_reports:"ವರದಿಗಳು", col_export:"ರಫ್ತು",
   empty_clusters:"ಇನ್ನೂ ಯಾವುದೇ ಸಕ್ರಿಯ ಅಭಿಯಾನಗಳು ಪತ್ತೆಯಾಗಿಲ್ಲ.",
   section_feed:"ಇತ್ತೀಚಿನ ವರದಿಗಳು", empty_feed:"ಈ ಅಧಿವೇಶನದಲ್ಲಿ ಇನ್ನೂ ಯಾವುದೇ ವರದಿಗಳನ್ನು ಸಲ್ಲಿಸಲಾಗಿಲ್ಲ.",
-  multiple_numbers:"ಬಹು ಸಂಖ್ಯೆಗಳು", unknown_number:"ಗೊತ್ತಿಲ್ಲ", unclassified:"ವರ್ಗೀಕರಿಸದ", packet_btn:"⬇ ಪ್ಯಾಕೆಟ್",
+  multiple_numbers:"ಬಹು ಸಂಖ್ಯೆಗಳು", unknown_number:"ಗೊತ್ತಿಲ್ಲ", unclassified:"ವರ್ಗೀಕರಿಸದ", packet_btn:"⬇ ಪ್ಯಾಕೆಟ್", packet_pdf_btn:"⬇ PDF",
   report_count_suffix:"ವರದಿ", reports_count_suffix:"ವರದಿಗಳು"
 },
 gu: {
@@ -816,7 +819,7 @@ gu: {
   col_id:"ઝુંબેશ આઈડી", col_type:"છેતરપિંડીનો પ્રકાર", col_severity:"તીવ્રતા", col_reports:"રિપોર્ટ્સ", col_export:"નિકાસ",
   empty_clusters:"હજુ સુધી કોઈ સક્રિય ઝુંબેશ મળી નથી.",
   section_feed:"તાજેતરના રિપોર્ટ્સ", empty_feed:"આ સત્રમાં હજુ સુધી કોઈ રિપોર્ટ સબમિટ કરવામાં આવ્યો નથી.",
-  multiple_numbers:"ઘણા નંબરો", unknown_number:"અજ્ઞાત", unclassified:"અવર્ગીકૃત", packet_btn:"⬇ પેકેટ",
+  multiple_numbers:"ઘણા નંબરો", unknown_number:"અજ્ઞાત", unclassified:"અવર્ગીકૃત", packet_btn:"⬇ પેકેટ", packet_pdf_btn:"⬇ PDF",
   report_count_suffix:"રિપોર્ટ", reports_count_suffix:"રિપોર્ટ્સ"
 },
 ml: {
@@ -848,7 +851,7 @@ ml: {
   col_id:"കാമ്പെയിൻ ഐഡി", col_type:"തട്ടിപ്പിന്റെ തരം", col_severity:"തീവ്രത", col_reports:"റിപ്പോർട്ടുകൾ", col_export:"കയറ്റുമതി",
   empty_clusters:"ഇതുവരെ സജീവ കാമ്പെയിനുകളൊന്നും കണ്ടെത്തിയിട്ടില്ല.",
   section_feed:"സമീപകാല റിപ്പോർട്ടുകൾ", empty_feed:"ഈ സെഷനിൽ ഇതുവരെ റിപ്പോർട്ടുകളൊന്നും സമർപ്പിച്ചിട്ടില്ല.",
-  multiple_numbers:"ഒന്നിലധികം നമ്പറുകൾ", unknown_number:"അജ്ഞാതം", unclassified:"തരംതിരിക്കാത്തത്", packet_btn:"⬇ പാക്കറ്റ്",
+  multiple_numbers:"ഒന്നിലധികം നമ്പറുകൾ", unknown_number:"അജ്ഞാതം", unclassified:"തരംതിരിക്കാത്തത്", packet_btn:"⬇ പാക്കറ്റ്", packet_pdf_btn:"⬇ PDF",
   report_count_suffix:"റിപ്പോർട്ട്", reports_count_suffix:"റിപ്പോർട്ടുകൾ"
 },
 pa: {
@@ -880,7 +883,7 @@ pa: {
   col_id:"ਮੁਹਿੰਮ ਆਈਡੀ", col_type:"ਧੋਖਾਧੜੀ ਦੀ ਕਿਸਮ", col_severity:"ਗੰਭੀਰਤਾ", col_reports:"ਰਿਪੋਰਟਾਂ", col_export:"ਨਿਰਯਾਤ",
   empty_clusters:"ਅਜੇ ਤੱਕ ਕੋਈ ਸਰਗਰਮ ਮੁਹਿੰਮ ਨਹੀਂ ਮਿਲੀ।",
   section_feed:"ਹਾਲੀਆ ਰਿਪੋਰਟਾਂ", empty_feed:"ਇਸ ਸੈਸ਼ਨ ਵਿੱਚ ਅਜੇ ਤੱਕ ਕੋਈ ਰਿਪੋਰਟ ਜਮ੍ਹਾਂ ਨਹੀਂ ਕੀਤੀ ਗਈ।",
-  multiple_numbers:"ਕਈ ਨੰਬਰ", unknown_number:"ਅਣਜਾਣ", unclassified:"ਗੈਰ-ਵਰਗੀਕ੍ਰਿਤ", packet_btn:"⬇ ਪੈਕੇਟ",
+  multiple_numbers:"ਕਈ ਨੰਬਰ", unknown_number:"ਅਣਜਾਣ", unclassified:"ਗੈਰ-ਵਰਗੀਕ੍ਰਿਤ", packet_btn:"⬇ ਪੈਕੇਟ", packet_pdf_btn:"⬇ PDF",
   report_count_suffix:"ਰਿਪੋਰਟ", reports_count_suffix:"ਰਿਪੋਰਟਾਂ"
 },
 or: {
@@ -912,7 +915,7 @@ or: {
   col_id:"ଅଭିଯାନ ଆଇଡି", col_type:"ଠକେଇ ପ୍ରକାର", col_severity:"ତୀବ୍ରତା", col_reports:"ରିପୋର୍ଟ", col_export:"ରପ୍ତାନି",
   empty_clusters:"ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ସକ୍ରିୟ ଅଭିଯାନ ଚିହ୍ନଟ ହୋଇନାହିଁ।",
   section_feed:"ସାମ୍ପ୍ରତିକ ରିପୋର୍ଟ", empty_feed:"ଏହି ସେସନରେ ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ରିପୋର୍ଟ ଦାଖଲ ହୋଇନାହିଁ।",
-  multiple_numbers:"ଏକାଧିକ ନମ୍ବର", unknown_number:"ଅଜଣା", unclassified:"ଅବର୍ଗୀକୃତ", packet_btn:"⬇ ପ୍ୟାକେଟ୍",
+  multiple_numbers:"ଏକାଧିକ ନମ୍ବର", unknown_number:"ଅଜଣା", unclassified:"ଅବର୍ଗୀକୃତ", packet_btn:"⬇ ପ୍ୟାକେଟ୍", packet_pdf_btn:"⬇ PDF",
   report_count_suffix:"ରିପୋର୍ଟ", reports_count_suffix:"ରିପୋର୍ଟ"
 },
 ur: {
@@ -944,7 +947,7 @@ ur: {
   col_id:"مہم آئی ڈی", col_type:"فراڈ کی قسم", col_severity:"شدت", col_reports:"رپورٹس", col_export:"برآمد",
   empty_clusters:"ابھی تک کوئی فعال مہم نہیں ملی۔",
   section_feed:"حالیہ رپورٹس", empty_feed:"اس سیشن میں ابھی تک کوئی رپورٹ جمع نہیں کرائی گئی۔",
-  multiple_numbers:"متعدد نمبرز", unknown_number:"نامعلوم", unclassified:"غیر درجہ بند", packet_btn:"⬇ پیکٹ",
+  multiple_numbers:"متعدد نمبرز", unknown_number:"نامعلوم", unclassified:"غیر درجہ بند", packet_btn:"⬇ پیکٹ", packet_pdf_btn:"⬇ PDF",
   report_count_suffix:"رپورٹ", reports_count_suffix:"رپورٹس"
 }
 };
@@ -1636,7 +1639,10 @@ async function loadCommandCenter(){
         <div class="cluster-type">${escapeHtml(c.scam_type)}<span class="sample-num">${escapeHtml(c.sample_number || dict.multiple_numbers)}</span></div>
         <div><span class="severity-pill" style="background:${sevBg(c.severity)};color:${sevColor(c.severity)};">${c.severity.toUpperCase()}</span></div>
         <div class="cluster-count">${c.count} ${c.count>1?dict.reports_count_suffix:dict.report_count_suffix}</div>
-        <div><button class="export-btn" onclick='exportPacket(${JSON.stringify(JSON.stringify(c)).replace(/'/g,"&apos;")})'>${dict.packet_btn}</button></div>
+        <div class="export-btn-group">
+          <button class="export-btn" onclick='exportPacketJson(${JSON.stringify(JSON.stringify(c)).replace(/'/g,"&apos;")})'>${dict.packet_btn}</button>
+          <button class="export-btn" onclick='exportPacketPdf(${JSON.stringify(JSON.stringify(c)).replace(/'/g,"&apos;")})'>${dict.packet_pdf_btn}</button>
+        </div>
       </div>
     `).join("");
   }
@@ -1659,9 +1665,10 @@ async function loadCommandCenter(){
 function sevBg(s){ return s==="high" ? "var(--danger-bg)" : s==="medium" ? "var(--caution-bg)" : "var(--safe-bg)"; }
 function sevColor(s){ return s==="high" ? "var(--danger)" : s==="medium" ? "var(--caution)" : "var(--safe)"; }
 
-function exportPacket(jsonStr){
-  const cluster = JSON.parse(jsonStr);
-  const packet = {
+/* ---------- shared intelligence packet builder ---------- */
+
+function buildPacketObject(cluster){
+  return {
     packet_id: "INTEL-" + cluster.id,
     generated_at: new Date().toISOString(),
     scam_type: cluster.scam_type,
@@ -1681,6 +1688,17 @@ function exportPacket(jsonStr){
     })),
     note: "Auto-generated intelligence packet from citizen-reported data. Structured for jurisdictional handoff and NCRB cross-reference. Not independently verified evidence — requires investigating officer review."
   };
+}
+
+async function sha256Hex(str){
+  const enc = new TextEncoder().encode(str);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", enc);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function exportPacketJson(jsonStr){
+  const cluster = JSON.parse(jsonStr);
+  const packet = buildPacketObject(cluster);
   const blob = new Blob([JSON.stringify(packet, null, 2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -1688,6 +1706,138 @@ function exportPacket(jsonStr){
   a.download = packet.packet_id + ".json";
   a.click();
   URL.revokeObjectURL(url);
+}
+
+/* ---------- PDF intelligence packet ---------- */
+
+async function exportPacketPdf(jsonStr){
+  if(!window.jspdf){
+    alert("PDF library did not load. Check your connection and try again.");
+    return;
+  }
+  const cluster = JSON.parse(jsonStr);
+  const packet = buildPacketObject(cluster);
+  const contentHash = await sha256Hex(JSON.stringify(packet));
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const marginX = 40;
+  let y = 0;
+
+  function drawHeader(){
+    doc.setFillColor(11, 18, 32);
+    doc.rect(0, 0, pageWidth, 66, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(15);
+    doc.text("SURAKSHA GRID — INTELLIGENCE PACKET", marginX, 30);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text("Digital Public Safety Intelligence Platform — Auto-Generated Report", marginX, 46);
+    y = 90;
+    doc.setTextColor(20, 20, 20);
+  }
+
+  function metaRow(label, value){
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.text(label, marginX, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(String(value), marginX + 110, y);
+    y += 16;
+  }
+
+  function checkPageBreak(minSpace){
+    if(y > pageHeight - minSpace){
+      doc.addPage();
+      y = 40;
+      doc.setTextColor(20, 20, 20);
+    }
+  }
+
+  drawHeader();
+  metaRow("Packet ID:", packet.packet_id);
+  metaRow("Generated:", packet.generated_at);
+  metaRow("Scam type:", packet.scam_type || "Unclassified");
+  metaRow("Severity:", (packet.severity || "").toUpperCase());
+  metaRow("Linked reports:", packet.report_count);
+  y += 6;
+
+  // integrity hash block
+  doc.setDrawColor(210, 210, 210);
+  doc.line(marginX, y, pageWidth - marginX, y);
+  y += 18;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.text("CONTENT HASH (SHA-256, for integrity verification):", marginX, y);
+  y += 13;
+  doc.setFont("courier", "normal");
+  doc.setFontSize(8);
+  doc.text(contentHash, marginX, y);
+  y += 22;
+
+  // linked reports table
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("Linked Reports", marginX, y);
+  y += 16;
+
+  const cols = [
+    { label: "Time", x: marginX, w: 95 },
+    { label: "Number", x: marginX + 95, w: 90 },
+    { label: "Risk", x: marginX + 185, w: 45 },
+    { label: "Description", x: marginX + 230, w: pageWidth - marginX - (marginX + 230) }
+  ];
+
+  function drawTableHeader(){
+    doc.setFillColor(230, 233, 240);
+    doc.rect(marginX, y - 11, pageWidth - marginX * 2, 16, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setTextColor(40, 40, 40);
+    cols.forEach(c => doc.text(c.label, c.x + 3, y));
+    y += 16;
+  }
+
+  checkPageBreak(120);
+  drawTableHeader();
+
+  packet.linked_reports.forEach((r) => {
+    checkPageBreak(60);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(20, 20, 20);
+    const timeStr = new Date(r.timestamp).toLocaleString();
+    const desc = (r.description || "").replace(/\s+/g, " ").trim();
+    const descLines = doc.splitTextToSize(desc, cols[3].w - 6);
+    const rowLines = Math.max(1, Math.min(descLines.length, 3));
+    const rowHeight = rowLines * 10 + 6;
+
+    doc.text(timeStr, cols[0].x + 3, y);
+    doc.text(String(r.number || "unknown"), cols[1].x + 3, y);
+    doc.text(String(r.risk_level || "").toUpperCase(), cols[2].x + 3, y);
+    doc.text(descLines.slice(0, 3), cols[3].x + 3, y);
+
+    y += rowHeight;
+    doc.setDrawColor(235, 235, 235);
+    doc.line(marginX, y - 4, pageWidth - marginX, y - 4);
+  });
+
+  // footer note
+  checkPageBreak(80);
+  y += 10;
+  doc.setDrawColor(210, 210, 210);
+  doc.line(marginX, y, pageWidth - marginX, y);
+  y += 16;
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(8);
+  doc.setTextColor(90, 90, 90);
+  const noteLines = doc.splitTextToSize(packet.note, pageWidth - marginX * 2);
+  doc.text(noteLines, marginX, y);
+
+  doc.save(packet.packet_id + ".pdf");
 }
 
 document.getElementById("btn-refresh").addEventListener("click", loadCommandCenter);
