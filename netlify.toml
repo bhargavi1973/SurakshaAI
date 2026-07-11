@@ -13,3 +13,8 @@
   from = "/api/kv"
   to = "/.netlify/functions/kv"
   status = 200
+
+[[redirects]]
+  from = "/api/auth"
+  to = "/.netlify/functions/auth"
+  status = 200

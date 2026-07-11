@@ -259,10 +259,97 @@
   .currency-row.header{background:var(--panel-2);font-size:10.5px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-dim);font-weight:700;}
   body.script-active .currency-row.header{text-transform:none;}
   .currency-row:last-child{border-bottom:none;}
+
+  /* ---------- login / role select screen ---------- */
+  .login-shell{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    padding:24px;background:radial-gradient(circle at 30% 20%, rgba(59,130,246,0.08), transparent 60%), var(--ink);
+  }
+  .login-card{max-width:640px;width:100%;}
+  .login-brand{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:8px;}
+  .login-brand h1{font-family:var(--font-display);font-size:24px;margin:0;font-weight:700;}
+  .login-sub{text-align:center;color:var(--text-dim);font-size:14px;margin:6px 0 28px;}
+  .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:640px){.role-grid{grid-template-columns:1fr;}}
+  .role-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:22px;text-align:left;cursor:pointer;transition:.15s;
+    display:flex;flex-direction:column;gap:6px;color:var(--text);font-family:var(--font-body);
+  }
+  .role-card:hover{border-color:var(--brand);background:var(--panel-2);}
+  .role-icon{font-size:26px;margin-bottom:4px;}
+  .role-title{font-family:var(--font-display);font-size:17px;font-weight:600;}
+  body.script-active .role-title{font-family:var(--font-script);}
+  .role-sub{font-size:12.5px;color:var(--text-dim);line-height:1.5;}
+  .role-card-official{cursor:default;}
+  .official-login-form{margin-top:14px;display:flex;flex-direction:column;gap:8px;}
+  .official-login-form input{
+    background:var(--panel-2);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:10px 12px;font-size:14px;font-family:var(--font-mono);
+  }
+  .official-login-form input:focus{outline:2px solid var(--brand);outline-offset:1px;}
+  .login-error{color:var(--danger);font-size:12.5px;background:var(--danger-bg);padding:8px 10px;border-radius:7px;}
+
+  /* ---------- role indicator in topbar ---------- */
+  .role-indicator{display:flex;align-items:center;gap:8px;}
+  .role-pill{
+    font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:0.03em;
+    padding:6px 11px;border-radius:20px;background:var(--brand-bg);color:#9CC1FB;
+    border:1px solid rgba(59,130,246,0.3);white-space:nowrap;
+  }
+  .role-pill.official{background:var(--caution-bg);color:var(--caution);border-color:rgba(240,169,59,0.3);}
+
+  /* ---------- dual front/back currency upload ---------- */
+  .upload-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+  @media (max-width:560px){.upload-row{grid-template-columns:1fr;}}
+  .upload-slot label{margin-bottom:8px;}
+  .upload-slot .dropzone{padding:20px 12px;margin-bottom:10px;}
+  .upload-slot .dropzone-icon{font-size:22px;margin-bottom:6px;}
+  .upload-slot .dropzone-text{font-size:12px;}
+  .upload-slot .preview-wrap{margin-bottom:10px;}
+  .upload-slot .preview-wrap img{max-height:160px;}
+  .back-optional-tag{
+    font-size:10.5px;color:var(--text-dim);font-weight:400;text-transform:none;
+    letter-spacing:normal;margin-left:4px;
+  }
 </style>
 </head>
 <body>
-<div class="shell">
+
+<!-- ============ LOGIN / ROLE SELECT SCREEN ============ -->
+<div class="login-shell" id="login-shell">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="brand-mark">SG</div>
+      <div class="brand-text">
+        <div class="eyebrow" data-i18n="eyebrow">Digital Public Safety Intelligence — Prototype</div>
+        <h1>Suraksha Grid</h1>
+      </div>
+    </div>
+    <p class="login-sub" data-i18n="login_eyebrow">Choose how you're accessing Suraksha Grid</p>
+
+    <div class="role-grid">
+      <button class="role-card" id="role-citizen-btn">
+        <div class="role-icon">🧑</div>
+        <div class="role-title" data-i18n="login_citizen_title">I'm a Citizen</div>
+        <div class="role-sub" data-i18n="login_citizen_sub">Report a suspicious contact or check a currency note</div>
+      </button>
+
+      <div class="role-card role-card-official" id="role-official-card">
+        <div class="role-icon">🛡️</div>
+        <div class="role-title" data-i18n="login_official_title">I'm a Cyber Official</div>
+        <div class="role-sub" data-i18n="login_official_sub">Access the command center intelligence dashboard</div>
+        <div class="official-login-form">
+          <input type="password" id="official-access-code" data-i18n-placeholder="login_access_code_placeholder" placeholder="Access code" />
+          <button class="submit-btn" id="official-login-btn" data-i18n="login_submit">Continue</button>
+          <div class="login-error" id="login-error" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="shell" id="app-shell" style="display:none;">
 
   <div class="topbar">
     <div class="brand">
@@ -290,10 +377,14 @@
           <option value="ur">اردو (Urdu)</option>
         </select>
       </div>
-      <div class="tabs">
+      <div class="tabs" id="main-tabs">
         <button class="tab-btn active" data-view="report" data-i18n="nav_report">Report a Contact</button>
         <button class="tab-btn" data-view="currency" data-i18n="nav_currency">Currency Check</button>
         <button class="tab-btn" data-view="command" data-i18n="nav_command">Command Center</button>
+      </div>
+      <div class="role-indicator">
+        <span class="role-pill" id="role-pill"></span>
+        <button class="export-btn" id="logout-btn" data-i18n="logout_btn">Switch role</button>
       </div>
     </div>
   </div>
@@ -303,6 +394,7 @@
     <div class="report-layout">
       <div class="card">
         <h2 data-i18n="report_title">Is this a scam?</h2>
+
         <p class="sub" data-i18n="report_sub">Tell us what's happening right now — during the call or message, not after. Takes 20 seconds. Your report also helps us track this operation before it reaches others.</p>
 
         <div class="field">
@@ -358,15 +450,31 @@
         <h2 data-i18n="currency_title">Check a currency note</h2>
         <p class="sub" data-i18n="currency_sub">Take a clear, well-lit photo of the note (both sides help) and we'll screen it for visible signs of counterfeiting — before you accept it or hand it to someone else.</p>
 
-        <div class="dropzone" id="dropzone">
-          <div class="dropzone-icon">📷</div>
-          <div class="dropzone-text"><span data-i18n="dropzone_text"><strong>Tap to upload</strong> a photo of the note</span></div>
-          <input type="file" id="currency-file-input" accept="image/*" capture="environment" />
-        </div>
-
-        <div class="preview-wrap" id="preview-wrap">
-          <img id="preview-img" src="" alt="Note preview" />
-          <button class="remove-img-btn" id="remove-img-btn" data-i18n="remove_image">✕ Remove</button>
+        <div class="upload-row">
+          <div class="upload-slot">
+            <label data-i18n="label_front_side">Front side (required)</label>
+            <div class="dropzone" id="dropzone-front">
+              <div class="dropzone-icon">📷</div>
+              <div class="dropzone-text"><span data-i18n="dropzone_front"><strong>Tap to upload</strong> front</span></div>
+              <input type="file" id="currency-file-input-front" accept="image/*" capture="environment" />
+            </div>
+            <div class="preview-wrap" id="preview-wrap-front">
+              <img id="preview-img-front" src="" alt="Front of note" />
+              <button class="remove-img-btn" id="remove-img-btn-front" data-i18n="remove_image">✕ Remove</button>
+            </div>
+          </div>
+          <div class="upload-slot">
+            <label data-i18n="label_back_side">Back side (optional — improves accuracy)</label>
+            <div class="dropzone" id="dropzone-back">
+              <div class="dropzone-icon">📷</div>
+              <div class="dropzone-text"><span data-i18n="dropzone_back"><strong>Tap to upload</strong> back</span></div>
+              <input type="file" id="currency-file-input-back" accept="image/*" capture="environment" />
+            </div>
+            <div class="preview-wrap" id="preview-wrap-back">
+              <img id="preview-img-back" src="" alt="Back of note" />
+              <button class="remove-img-btn" id="remove-img-btn-back" data-i18n="remove_image">✕ Remove</button>
+            </div>
+          </div>
         </div>
 
         <div class="field">
@@ -1110,8 +1218,134 @@ ur: {
 }
 };
 
+/* Extra keys for the login/role-select screen and the front/back
+   currency upload slots. Merged on top of the other dictionaries at
+   lookup time via getDict(). */
+const I18N_EXTRA2 = {
+en: {
+  login_eyebrow:"Choose how you're accessing Suraksha Grid",
+  login_citizen_title:"I'm a Citizen", login_citizen_sub:"Report a suspicious contact or check a currency note",
+  login_official_title:"I'm a Cyber Official", login_official_sub:"Access the command center intelligence dashboard",
+  login_access_code_placeholder:"Access code", login_submit:"Continue", login_checking:"Checking...",
+  login_invalid_code:"Incorrect access code. Please try again.",
+  logout_btn:"Switch role", role_badge_citizen:"CITIZEN", role_badge_official:"CYBER OFFICIAL",
+  label_front_side:"Front side (required)", label_back_side:"Back side (optional — improves accuracy)",
+  dropzone_front:"Tap to upload front", dropzone_back:"Tap to upload back"
+},
+hi: {
+  login_eyebrow:"आप सुरक्षा ग्रिड तक कैसे पहुँच रहे हैं चुनें",
+  login_citizen_title:"मैं एक नागरिक हूँ", login_citizen_sub:"संदिग्ध संपर्क की रिपोर्ट करें या करेंसी नोट जांचें",
+  login_official_title:"मैं एक साइबर अधिकारी हूँ", login_official_sub:"कमांड सेंटर इंटेलिजेंस डैशबोर्ड एक्सेस करें",
+  login_access_code_placeholder:"एक्सेस कोड", login_submit:"जारी रखें", login_checking:"जांच हो रही है...",
+  login_invalid_code:"गलत एक्सेस कोड। कृपया फिर से प्रयास करें।",
+  logout_btn:"भूमिका बदलें", role_badge_citizen:"नागरिक", role_badge_official:"साइबर अधिकारी",
+  label_front_side:"आगे का हिस्सा (आवश्यक)", label_back_side:"पीछे का हिस्सा (वैकल्पिक — सटीकता बढ़ाता है)",
+  dropzone_front:"आगे की फोटो अपलोड करने के लिए टैप करें", dropzone_back:"पीछे की फोटो अपलोड करने के लिए टैप करें"
+},
+ta: {
+  login_eyebrow:"சுரக்ஷா கிரிட்டை நீங்கள் எவ்வாறு அணுகுகிறீர்கள் என்பதைத் தேர்ந்தெடுக்கவும்",
+  login_citizen_title:"நான் ஒரு குடிமகன்", login_citizen_sub:"சந்தேகத்திற்குரிய தொடர்பை புகாரளிக்கவும் அல்லது நாணயக் குறிப்பை சரிபார்க்கவும்",
+  login_official_title:"நான் ஒரு சைபர் அதிகாரி", login_official_sub:"கட்டளை மைய நுண்ணறிவு டாஷ்போர்டை அணுகவும்",
+  login_access_code_placeholder:"அணுகல் குறியீடு", login_submit:"தொடரவும்", login_checking:"சரிபார்க்கிறது...",
+  login_invalid_code:"தவறான அணுகல் குறியீடு. மீண்டும் முயற்சிக்கவும்.",
+  logout_btn:"பங்கை மாற்று", role_badge_citizen:"குடிமகன்", role_badge_official:"சைபர் அதிகாரி",
+  label_front_side:"முன் பக்கம் (அவசியம்)", label_back_side:"பின் பக்கம் (விருப்பம் — துல்லியத்தை மேம்படுத்துகிறது)",
+  dropzone_front:"முன் புகைப்படத்தை பதிவேற்ற தட்டவும்", dropzone_back:"பின் புகைப்படத்தை பதிவேற்ற தட்டவும்"
+},
+te: {
+  login_eyebrow:"మీరు సురక్ష గ్రిడ్‌ను ఎలా యాక్సెస్ చేస్తున్నారో ఎంచుకోండి",
+  login_citizen_title:"నేను ఒక పౌరుడిని", login_citizen_sub:"సందేహాస్పద సంప్రదింపును నివేదించండి లేదా కరెన్సీ నోటును తనిఖీ చేయండి",
+  login_official_title:"నేను సైబర్ అధికారిని", login_official_sub:"కమాండ్ సెంటర్ ఇంటెలిజెన్స్ డాష్‌బోర్డ్‌ను యాక్సెస్ చేయండి",
+  login_access_code_placeholder:"యాక్సెస్ కోడ్", login_submit:"కొనసాగించు", login_checking:"తనిఖీ చేస్తోంది...",
+  login_invalid_code:"తప్పు యాక్సెస్ కోడ్. దయచేసి మళ్లీ ప్రయత్నించండి.",
+  logout_btn:"పాత్రను మార్చండి", role_badge_citizen:"పౌరుడు", role_badge_official:"సైబర్ అధికారి",
+  label_front_side:"ముందు వైపు (అవసరం)", label_back_side:"వెనుక వైపు (ఐచ్ఛికం — ఖచ్చితత్వాన్ని మెరుగుపరుస్తుంది)",
+  dropzone_front:"ముందు ఫోటోను అప్‌లోడ్ చేయడానికి నొక్కండి", dropzone_back:"వెనుక ఫోటోను అప్‌లోడ్ చేయడానికి నొక్కండి"
+},
+bn: {
+  login_eyebrow:"আপনি সুরক্ষা গ্রিড কীভাবে অ্যাক্সেস করছেন তা বেছে নিন",
+  login_citizen_title:"আমি একজন নাগরিক", login_citizen_sub:"সন্দেহজনক যোগাযোগের রিপোর্ট করুন বা মুদ্রার নোট যাচাই করুন",
+  login_official_title:"আমি একজন সাইবার অফিসার", login_official_sub:"কমান্ড সেন্টার ইন্টেলিজেন্স ড্যাশবোর্ড অ্যাক্সেস করুন",
+  login_access_code_placeholder:"অ্যাক্সেস কোড", login_submit:"চালিয়ে যান", login_checking:"পরীক্ষা করা হচ্ছে...",
+  login_invalid_code:"ভুল অ্যাক্সেস কোড। আবার চেষ্টা করুন।",
+  logout_btn:"ভূমিকা পরিবর্তন করুন", role_badge_citizen:"নাগরিক", role_badge_official:"সাইবার অফিসার",
+  label_front_side:"সামনের দিক (আবশ্যক)", label_back_side:"পিছনের দিক (ঐচ্ছিক — নির্ভুলতা বাড়ায়)",
+  dropzone_front:"সামনের ছবি আপলোড করতে ট্যাপ করুন", dropzone_back:"পিছনের ছবি আপলোড করতে ট্যাপ করুন"
+},
+mr: {
+  login_eyebrow:"तुम्ही सुरक्षा ग्रिड कसे अॅक्सेस करत आहात ते निवडा",
+  login_citizen_title:"मी एक नागरिक आहे", login_citizen_sub:"संशयास्पद संपर्काची तक्रार करा किंवा चलनी नोट तपासा",
+  login_official_title:"मी एक सायबर अधिकारी आहे", login_official_sub:"कमांड सेंटर इंटेलिजन्स डॅशबोर्ड अॅक्सेस करा",
+  login_access_code_placeholder:"अॅक्सेस कोड", login_submit:"सुरू ठेवा", login_checking:"तपासत आहे...",
+  login_invalid_code:"चुकीचा अॅक्सेस कोड. कृपया पुन्हा प्रयत्न करा.",
+  logout_btn:"भूमिका बदला", role_badge_citizen:"नागरिक", role_badge_official:"सायबर अधिकारी",
+  label_front_side:"पुढील बाजू (आवश्यक)", label_back_side:"मागील बाजू (पर्यायी — अचूकता वाढवते)",
+  dropzone_front:"पुढील फोटो अपलोड करण्यासाठी टॅप करा", dropzone_back:"मागील फोटो अपलोड करण्यासाठी टॅप करा"
+},
+kn: {
+  login_eyebrow:"ನೀವು ಸುರಕ್ಷಾ ಗ್ರಿಡ್ ಅನ್ನು ಹೇಗೆ ಪ್ರವೇಶಿಸುತ್ತಿದ್ದೀರಿ ಎಂಬುದನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  login_citizen_title:"ನಾನು ಒಬ್ಬ ನಾಗರಿಕ", login_citizen_sub:"ಸಂಶಯಾಸ್ಪದ ಸಂಪರ್ಕವನ್ನು ವರದಿ ಮಾಡಿ ಅಥವಾ ಕರೆನ್ಸಿ ನೋಟನ್ನು ಪರಿಶೀಲಿಸಿ",
+  login_official_title:"ನಾನು ಸೈಬರ್ ಅಧಿಕಾರಿ", login_official_sub:"ಕಮಾಂಡ್ ಸೆಂಟರ್ ಇಂಟೆಲಿಜೆನ್ಸ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಪ್ರವೇಶಿಸಿ",
+  login_access_code_placeholder:"ಪ್ರವೇಶ ಕೋಡ್", login_submit:"ಮುಂದುವರಿಸಿ", login_checking:"ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ...",
+  login_invalid_code:"ತಪ್ಪಾದ ಪ್ರವೇಶ ಕೋಡ್. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  logout_btn:"ಪಾತ್ರವನ್ನು ಬದಲಾಯಿಸಿ", role_badge_citizen:"ನಾಗರಿಕ", role_badge_official:"ಸೈಬರ್ ಅಧಿಕಾರಿ",
+  label_front_side:"ಮುಂಭಾಗ (ಅಗತ್ಯ)", label_back_side:"ಹಿಂಭಾಗ (ಐಚ್ಛಿಕ — ನಿಖರತೆಯನ್ನು ಸುಧಾರಿಸುತ್ತದೆ)",
+  dropzone_front:"ಮುಂಭಾಗದ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ", dropzone_back:"ಹಿಂಭಾಗದ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ"
+},
+gu: {
+  login_eyebrow:"તમે સુરક્ષા ગ્રિડને કેવી રીતે એક્સેસ કરી રહ્યા છો તે પસંદ કરો",
+  login_citizen_title:"હું એક નાગરિક છું", login_citizen_sub:"શંકાસ્પદ સંપર્કની જાણ કરો અથવા ચલણી નોટ ચકાસો",
+  login_official_title:"હું એક સાયબર અધિકારી છું", login_official_sub:"કમાન્ડ સેન્ટર ઇન્ટેલિજન્સ ડેશબોર્ડ એક્સેસ કરો",
+  login_access_code_placeholder:"એક્સેસ કોડ", login_submit:"ચાલુ રાખો", login_checking:"તપાસી રહ્યા છીએ...",
+  login_invalid_code:"ખોટો એક્સેસ કોડ. કૃપા કરી ફરી પ્રયાસ કરો.",
+  logout_btn:"ભૂમિકા બદલો", role_badge_citizen:"નાગરિક", role_badge_official:"સાયબર અધિકારી",
+  label_front_side:"આગળની બાજુ (જરૂરી)", label_back_side:"પાછળની બાજુ (વૈકલ્પિક — ચોકસાઈ સુધારે છે)",
+  dropzone_front:"આગળનો ફોટો અપલોડ કરવા ટેપ કરો", dropzone_back:"પાછળનો ફોટો અપલોડ કરવા ટેપ કરો"
+},
+ml: {
+  login_eyebrow:"നിങ്ങൾ സുരക്ഷാ ഗ്രിഡ് എങ്ങനെ ആക്‌സസ് ചെയ്യുന്നു എന്ന് തിരഞ്ഞെടുക്കുക",
+  login_citizen_title:"ഞാൻ ഒരു പൗരനാണ്", login_citizen_sub:"സംശയാസ്പദമായ ബന്ധം റിപ്പോർട്ട് ചെയ്യുക അല്ലെങ്കിൽ കറൻസി നോട്ട് പരിശോധിക്കുക",
+  login_official_title:"ഞാൻ ഒരു സൈബർ ഓഫീസറാണ്", login_official_sub:"കമാൻഡ് സെന്റർ ഇന്റലിജൻസ് ഡാഷ്‌ബോർഡ് ആക്‌സസ് ചെയ്യുക",
+  login_access_code_placeholder:"ആക്‌സസ് കോഡ്", login_submit:"തുടരുക", login_checking:"പരിശോധിക്കുന്നു...",
+  login_invalid_code:"തെറ്റായ ആക്‌സസ് കോഡ്. ദയവായി വീണ്ടും ശ്രമിക്കുക.",
+  logout_btn:"റോൾ മാറ്റുക", role_badge_citizen:"പൗരൻ", role_badge_official:"സൈബർ ഓഫീസർ",
+  label_front_side:"മുൻവശം (ആവശ്യമാണ്)", label_back_side:"പിൻവശം (ഓപ്ഷണൽ — കൃത്യത മെച്ചപ്പെടുത്തുന്നു)",
+  dropzone_front:"മുൻവശ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യാൻ ടാപ്പ് ചെയ്യുക", dropzone_back:"പിൻവശ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യാൻ ടാപ്പ് ചെയ്യുക"
+},
+pa: {
+  login_eyebrow:"ਤੁਸੀਂ ਸੁਰਕਸ਼ਾ ਗਰਿੱਡ ਤੱਕ ਕਿਵੇਂ ਪਹੁੰਚ ਰਹੇ ਹੋ ਚੁਣੋ",
+  login_citizen_title:"ਮੈਂ ਇੱਕ ਨਾਗਰਿਕ ਹਾਂ", login_citizen_sub:"ਸ਼ੱਕੀ ਸੰਪਰਕ ਦੀ ਰਿਪੋਰਟ ਕਰੋ ਜਾਂ ਕਰੰਸੀ ਨੋਟ ਦੀ ਜਾਂਚ ਕਰੋ",
+  login_official_title:"ਮੈਂ ਇੱਕ ਸਾਈਬਰ ਅਧਿਕਾਰੀ ਹਾਂ", login_official_sub:"ਕਮਾਂਡ ਸੈਂਟਰ ਇੰਟੈਲੀਜੈਂਸ ਡੈਸ਼ਬੋਰਡ ਤੱਕ ਪਹੁੰਚ ਕਰੋ",
+  login_access_code_placeholder:"ਐਕਸੈਸ ਕੋਡ", login_submit:"ਜਾਰੀ ਰੱਖੋ", login_checking:"ਜਾਂਚ ਹੋ ਰਹੀ ਹੈ...",
+  login_invalid_code:"ਗਲਤ ਐਕਸੈਸ ਕੋਡ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  logout_btn:"ਭੂਮਿਕਾ ਬਦਲੋ", role_badge_citizen:"ਨਾਗਰਿਕ", role_badge_official:"ਸਾਈਬਰ ਅਧਿਕਾਰੀ",
+  label_front_side:"ਅਗਲਾ ਪਾਸਾ (ਲੋੜੀਂਦਾ)", label_back_side:"ਪਿਛਲਾ ਪਾਸਾ (ਵਿਕਲਪਿਕ — ਸ਼ੁੱਧਤਾ ਵਧਾਉਂਦਾ ਹੈ)",
+  dropzone_front:"ਅਗਲੀ ਫੋਟੋ ਅੱਪਲੋਡ ਕਰਨ ਲਈ ਟੈਪ ਕਰੋ", dropzone_back:"ਪਿਛਲੀ ਫੋਟੋ ਅੱਪਲੋਡ ਕਰਨ ਲਈ ਟੈਪ ਕਰੋ"
+},
+or: {
+  login_eyebrow:"ଆପଣ ସୁରକ୍ଷା ଗ୍ରିଡ୍ କିପରି ଆକ୍ସେସ୍ କରୁଛନ୍ତି ବାଛନ୍ତୁ",
+  login_citizen_title:"ମୁଁ ଜଣେ ନାଗରିକ", login_citizen_sub:"ସନ୍ଦେହଜନକ ସମ୍ପର୍କ ରିପୋର୍ଟ କରନ୍ତୁ କିମ୍ବା ମୁଦ୍ରା ନୋଟ୍ ଯାଞ୍ଚ କରନ୍ତୁ",
+  login_official_title:"ମୁଁ ଜଣେ ସାଇବର ଅଧିକାରୀ", login_official_sub:"କମାଣ୍ଡ ସେଣ୍ଟର ଇଣ୍ଟେଲିଜେନ୍ସ ଡ୍ୟାସବୋର୍ଡ ଆକ୍ସେସ୍ କରନ୍ତୁ",
+  login_access_code_placeholder:"ଆକ୍ସେସ୍ କୋଡ୍", login_submit:"ଜାରି ରଖନ୍ତୁ", login_checking:"ଯାଞ୍ଚ ହେଉଛି...",
+  login_invalid_code:"ଭୁଲ ଆକ୍ସେସ୍ କୋଡ୍। ଦୟାକରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।",
+  logout_btn:"ଭୂମିକା ବଦଳାନ୍ତୁ", role_badge_citizen:"ନାଗରିକ", role_badge_official:"ସାଇବର ଅଧିକାରୀ",
+  label_front_side:"ଆଗ ପାର୍ଶ୍ୱ (ଆବଶ୍ୟକ)", label_back_side:"ପଛ ପାର୍ଶ୍ୱ (ବୈକଳ୍ପିକ — ସଠିକତାକୁ ବଢାଏ)",
+  dropzone_front:"ଆଗ ଫଟୋ ଅପଲୋଡ୍ କରିବାକୁ ଟାପ୍ କରନ୍ତୁ", dropzone_back:"ପଛ ଫଟୋ ଅପଲୋଡ୍ କରିବାକୁ ଟାପ୍ କରନ୍ତୁ"
+},
+ur: {
+  login_eyebrow:"آپ سراکشا گرڈ تک کیسے رسائی حاصل کر رہے ہیں منتخب کریں",
+  login_citizen_title:"میں ایک شہری ہوں", login_citizen_sub:"مشکوک رابطے کی رپورٹ کریں یا کرنسی نوٹ چیک کریں",
+  login_official_title:"میں ایک سائبر آفیسر ہوں", login_official_sub:"کمانڈ سینٹر انٹیلیجنس ڈیش بورڈ تک رسائی حاصل کریں",
+  login_access_code_placeholder:"رسائی کوڈ", login_submit:"جاری رکھیں", login_checking:"جانچ ہو رہی ہے...",
+  login_invalid_code:"غلط رسائی کوڈ۔ براہ کرم دوبارہ کوشش کریں۔",
+  logout_btn:"کردار تبدیل کریں", role_badge_citizen:"شہری", role_badge_official:"سائبر آفیسر",
+  label_front_side:"اگلا حصہ (لازمی)", label_back_side:"پچھلا حصہ (اختیاری — درستگی بہتر بناتا ہے)",
+  dropzone_front:"اگلی تصویر اپ لوڈ کرنے کے لیے تھپتھپائیں", dropzone_back:"پچھلی تصویر اپ لوڈ کرنے کے لیے تھپتھپائیں"
+}
+};
+
 function getDict(lang){
-  return Object.assign({}, I18N.en, I18N[lang]||{}, I18N_EXTRA.en, I18N_EXTRA[lang]||{});
+  return Object.assign({}, I18N.en, I18N[lang]||{}, I18N_EXTRA.en, I18N_EXTRA[lang]||{}, I18N_EXTRA2.en, I18N_EXTRA2[lang]||{});
 }
 
 const RTL_LANGS = ["ur"];
@@ -1133,6 +1367,12 @@ function applyTranslations(lang){
   document.documentElement.setAttribute("lang", lang);
   document.documentElement.setAttribute("dir", RTL_LANGS.includes(lang) ? "rtl" : "ltr");
   document.body.classList.toggle("script-active", lang !== "en");
+  // keep the role pill's label in sync with the selected language
+  const activeRole = (typeof sessionStorage !== "undefined") ? sessionStorage.getItem("suraksha_role") : null;
+  const rolePill = document.getElementById("role-pill");
+  if(activeRole && rolePill){
+    rolePill.textContent = dict[activeRole === "official" ? "role_badge_official" : "role_badge_citizen"];
+  }
   // re-render dynamic sections that were built with the old language
   if(document.getElementById("view-command").classList.contains("active")) loadCommandCenter();
 }
@@ -1460,78 +1700,113 @@ document.getElementById("btn-refresh").addEventListener("click", loadCommandCent
    ============================================================ */
 
 const CURRENCY_STORAGE_PREFIX = "fraudshield:currency:";
-let selectedImageBase64 = null;
-let selectedImageMediaType = null;
 
-const dropzone = document.getElementById("dropzone");
-const fileInput = document.getElementById("currency-file-input");
-const previewWrap = document.getElementById("preview-wrap");
-const previewImg = document.getElementById("preview-img");
-const removeImgBtn = document.getElementById("remove-img-btn");
-const btnScan = document.getElementById("btn-scan");
+// Two independent image slots -- back is optional.
+const currencyImages = {
+  front: { base64: null, mediaType: null },
+  back: { base64: null, mediaType: null }
+};
 
-dropzone.addEventListener("click", ()=> fileInput.click());
-dropzone.addEventListener("dragover", (e)=>{ e.preventDefault(); dropzone.classList.add("dragover"); });
-dropzone.addEventListener("dragleave", ()=> dropzone.classList.remove("dragover"));
-dropzone.addEventListener("drop", (e)=>{
-  e.preventDefault();
-  dropzone.classList.remove("dragover");
-  if(e.dataTransfer.files && e.dataTransfer.files[0]) handleImageFile(e.dataTransfer.files[0]);
-});
-fileInput.addEventListener("change", (e)=>{
-  if(e.target.files && e.target.files[0]) handleImageFile(e.target.files[0]);
-});
-removeImgBtn.addEventListener("click", (e)=>{
-  e.stopPropagation();
-  clearSelectedImage();
-});
+function setupUploadSlot(slotKey){
+  const dropzone = document.getElementById(`dropzone-${slotKey}`);
+  const fileInput = document.getElementById(`currency-file-input-${slotKey}`);
+  const previewWrap = document.getElementById(`preview-wrap-${slotKey}`);
+  const previewImg = document.getElementById(`preview-img-${slotKey}`);
+  const removeImgBtn = document.getElementById(`remove-img-btn-${slotKey}`);
 
-function handleImageFile(file){
+  dropzone.addEventListener("click", ()=> fileInput.click());
+  dropzone.addEventListener("dragover", (e)=>{ e.preventDefault(); dropzone.classList.add("dragover"); });
+  dropzone.addEventListener("dragleave", ()=> dropzone.classList.remove("dragover"));
+  dropzone.addEventListener("drop", (e)=>{
+    e.preventDefault();
+    dropzone.classList.remove("dragover");
+    if(e.dataTransfer.files && e.dataTransfer.files[0]) handleImageFile(slotKey, e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener("change", (e)=>{
+    if(e.target.files && e.target.files[0]) handleImageFile(slotKey, e.target.files[0]);
+  });
+  removeImgBtn.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    clearSelectedImage(slotKey);
+  });
+}
+
+function handleImageFile(slotKey, file){
   if(!file.type.startsWith("image/")) return;
+  const dropzone = document.getElementById(`dropzone-${slotKey}`);
+  const fileInput = document.getElementById(`currency-file-input-${slotKey}`);
+  const previewWrap = document.getElementById(`preview-wrap-${slotKey}`);
+  const previewImg = document.getElementById(`preview-img-${slotKey}`);
   const reader = new FileReader();
   reader.onload = ()=>{
-    const fullDataUrl = reader.result; // e.g. data:image/jpeg;base64,XXXX
+    const fullDataUrl = reader.result;
     const match = fullDataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/);
     if(!match) return;
-    selectedImageMediaType = match[1];
-    selectedImageBase64 = match[2];
+    currencyImages[slotKey].mediaType = match[1];
+    currencyImages[slotKey].base64 = match[2];
     previewImg.src = fullDataUrl;
     previewWrap.style.display = "block";
     dropzone.style.display = "none";
-    btnScan.disabled = false;
+    updateScanButtonState();
   };
   reader.readAsDataURL(file);
 }
 
-function clearSelectedImage(){
-  selectedImageBase64 = null;
-  selectedImageMediaType = null;
+function clearSelectedImage(slotKey){
+  const dropzone = document.getElementById(`dropzone-${slotKey}`);
+  const fileInput = document.getElementById(`currency-file-input-${slotKey}`);
+  const previewWrap = document.getElementById(`preview-wrap-${slotKey}`);
+  const previewImg = document.getElementById(`preview-img-${slotKey}`);
+  currencyImages[slotKey].base64 = null;
+  currencyImages[slotKey].mediaType = null;
   previewImg.src = "";
   previewWrap.style.display = "none";
   dropzone.style.display = "block";
   fileInput.value = "";
-  btnScan.disabled = true;
+  updateScanButtonState();
   document.getElementById("currency-result-card").style.display = "none";
 }
 
-async function classifyCurrencyNote(base64Data, mediaType, locationText, langCode){
+function updateScanButtonState(){
+  // Front image is required; back is optional.
+  document.getElementById("btn-scan").disabled = !currencyImages.front.base64;
+}
+
+setupUploadSlot("front");
+setupUploadSlot("back");
+
+async function classifyCurrencyNote(frontImg, backImg, locationText, langCode){
   const languageName = LANG_NAME_FOR_LLM[langCode] || "English";
-  const systemPrompt = `You are a visual currency-screening assistant for an Indian public safety platform. You look at a photo of a currency note (expected to be Indian Rupee, Mahatma Gandhi New Series or older series) and output ONLY a JSON object (no markdown fences, no preamble) with this exact shape:
+  const hasBack = !!(backImg && backImg.base64);
+
+  const systemPrompt = `You are a visual currency-screening assistant for an Indian public safety platform. You look at one or two photos of a currency note (expected to be Indian Rupee, Mahatma Gandhi New Series or older series) — the FRONT side always, and the BACK side if provided — and output ONLY a JSON object (no markdown fences, no preamble) with this exact shape:
 
 {
   "denomination_detected": "one of: ₹10, ₹20, ₹50, ₹100, ₹200, ₹500, ₹2000, or 'Unclear' if you cannot tell",
   "authenticity_verdict": "likely_genuine" | "visual_anomalies_found" | "likely_counterfeit" | "inconclusive",
   "confidence": 0.0-1.0,
-  "visual_flags": ["short phrase in ${languageName}, up to 5 items — e.g. blurred or misaligned printing, inconsistent font on serial number, colour looks off compared to genuine notes, portrait/watermark area unclear, security thread not visible as a continuous line, image too blurry/dark to assess"],
+  "visual_flags": ["short phrase in ${languageName}, up to 5 items — e.g. blurred or misaligned printing, inconsistent font on serial number, colour looks off compared to genuine notes, portrait/watermark area unclear, security thread not visible as a continuous line, Ashoka Pillar emblem or language panel unclear on back, image too blurry/dark to assess"],
   "advisory": "2-3 sentences in ${languageName}. MUST explicitly state that this is a photo-based visual screening only and cannot verify the security thread colour-shift, latent image, or UV/IR features, which require the physical note and proper equipment (UV lamp, bank counting machine, or RBI-authorised device). Recommend physical verification before accepting or rejecting the note based on this alone.",
   "recommended_action": "one short sentence in ${languageName}"
 }
 
-Assessment approach: examine what is visually assessable from a photo — overall print sharpness and registration, portrait clarity, consistency and alignment of the guilloche/geometric patterns, serial number font consistency and spacing, colour consistency typical of genuine RBI notes, presence and continuity of the visible security thread line, and any obvious smudging, colour bleed, or paper texture anomalies that suggest a photocopy or low-quality print. Do NOT claim to verify UV features, microprinting under magnification, or tactile intaglio print — these are physically impossible to assess from a standard photo, and you must say so in the advisory.
+Assessment approach for the FRONT image: overall print sharpness and registration, portrait (Mahatma Gandhi) clarity and position, consistency and alignment of the guilloche/geometric patterns, serial number font consistency and spacing, colour consistency typical of genuine RBI notes, presence and continuity of the visible security thread line, and any obvious smudging, colour bleed, or paper texture anomalies suggesting a photocopy or low-quality print.
 
-Be calibrated and conservative. If the image is blurry, poorly lit, or too small to assess, use "inconclusive" rather than guessing. If nothing looks wrong within what a photo can show, use "likely_genuine" but still include the standard advisory about physical verification. Never state with certainty that a note is 100% genuine or 100% fake — always frame as a screening-level assessment.`;
+${hasBack ? `A BACK image has also been provided. Cross-check it too: clarity and correct printing of the Ashoka Pillar emblem, alignment and legibility of the language panel, presence of the Swachh Bharat logo (on applicable denominations), and whether the printing quality on the back is consistent with the front (mismatched print quality between front and back photos of the "same" note is itself a red flag worth noting). Having both sides significantly increases how much can be assessed -- factor this into your confidence score.` : `Only a FRONT image was provided. Note in visual_flags or advisory that back-side features (language panel, Ashoka Pillar emblem, Swachh Bharat logo) could not be checked, and that providing the back photo would allow a more complete assessment. Keep confidence appropriately conservative given the incomplete view.`}
 
-  const userText = `Location where note was received (context only, optional): ${locationText || "not specified"}. Analyse the attached photo of the currency note.`;
+Do NOT claim to verify UV features, microprinting under magnification, or tactile intaglio print — these are physically impossible to assess from a standard photo, and you must say so in the advisory.
+
+Be calibrated and conservative. If any image is blurry, poorly lit, or too small to assess, use "inconclusive" rather than guessing. If nothing looks wrong within what the photo(s) can show, use "likely_genuine" but still include the standard advisory about physical verification. Never state with certainty that a note is 100% genuine or 100% fake — always frame as a screening-level assessment.`;
+
+  const userText = `Location where note was received (context only, optional): ${locationText || "not specified"}. The first image below is the FRONT of the note.${hasBack ? " The second image is the BACK of the note." : " No back-side image was provided."}`;
+
+  const contentBlocks = [
+    { type: "image", source: { type: "base64", media_type: frontImg.mediaType, data: frontImg.base64 } }
+  ];
+  if(hasBack){
+    contentBlocks.push({ type: "image", source: { type: "base64", media_type: backImg.mediaType, data: backImg.base64 } });
+  }
+  contentBlocks.push({ type: "text", text: userText });
 
   const response = await fetch("/api/llm", {
     method: "POST",
@@ -1540,13 +1815,7 @@ Be calibrated and conservative. If the image is blurry, poorly lit, or too small
       model: "claude-sonnet-5",
       max_tokens: 1000,
       system: systemPrompt,
-      messages: [{
-        role: "user",
-        content: [
-          { type: "image", source: { type: "base64", media_type: mediaType, data: base64Data } },
-          { type: "text", text: userText }
-        ]
-      }]
+      messages: [{ role: "user", content: contentBlocks }]
     })
   });
 
@@ -1557,12 +1826,13 @@ Be calibrated and conservative. If the image is blurry, poorly lit, or too small
   return JSON.parse(cleaned);
 }
 
-btnScan.addEventListener("click", async ()=>{
+document.getElementById("btn-scan").addEventListener("click", async ()=>{
   const dict = getDict(currentLang);
+  const btnScan = document.getElementById("btn-scan");
   const resultCard = document.getElementById("currency-result-card");
   const locationText = document.getElementById("in-location").value.trim();
 
-  if(!selectedImageBase64){
+  if(!currencyImages.front.base64){
     alert(dict.alert_no_image);
     return;
   }
@@ -1573,9 +1843,9 @@ btnScan.addEventListener("click", async ()=>{
   resultCard.innerHTML = `<div class="loading"><div class="spinner"></div> ${dict.loading_currency}</div>`;
 
   try{
-    const result = await classifyCurrencyNote(selectedImageBase64, selectedImageMediaType, locationText, currentLang);
+    const result = await classifyCurrencyNote(currencyImages.front, currencyImages.back, locationText, currentLang);
     renderCurrencyResult(result);
-    await saveCurrencyReport(result, locationText);
+    await saveCurrencyReport(result, locationText, !!currencyImages.back.base64);
   }catch(err){
     resultCard.innerHTML = `<div class="loading" style="color:var(--danger);">${dict.error_currency}</div>`;
     console.error(err);
@@ -1610,7 +1880,7 @@ function renderCurrencyResult(result){
   `;
 }
 
-async function saveCurrencyReport(result, locationText){
+async function saveCurrencyReport(result, locationText, hasBackImage){
   const id = "cur_" + Date.now() + "_" + Math.random().toString(36).slice(2,7);
   const record = {
     id,
@@ -1620,7 +1890,8 @@ async function saveCurrencyReport(result, locationText){
     denomination: result.denomination_detected,
     authenticity_verdict: result.authenticity_verdict,
     confidence: result.confidence,
-    visual_flags: result.visual_flags || []
+    visual_flags: result.visual_flags || [],
+    has_back_image: !!hasBackImage
   };
   try{
     await kvSet(CURRENCY_STORAGE_PREFIX + id, JSON.stringify(record));
@@ -1686,9 +1957,117 @@ loadCommandCenter = async function(){
   }
 };
 
+/* ============================================================
+   LOGIN / ROLE GATE
+   Citizens get Report + Currency Check. Cyber officials (access-code
+   gated via /api/auth, which checks a server-side secret) get only
+   the Command Center. This is a lightweight demo access gate, not a
+   production-grade authentication system -- see README.
+   ============================================================ */
+
+const ROLE_SESSION_KEY = "suraksha_role";
+
+function applyRoleUI(role){
+  const dict = getDict(currentLang);
+  const tabReport = document.querySelector('.tab-btn[data-view="report"]');
+  const tabCurrency = document.querySelector('.tab-btn[data-view="currency"]');
+  const tabCommand = document.querySelector('.tab-btn[data-view="command"]');
+  const rolePill = document.getElementById("role-pill");
+
+  if(role === "official"){
+    tabReport.style.display = "none";
+    tabCurrency.style.display = "none";
+    tabCommand.style.display = "inline-block";
+    rolePill.textContent = dict.role_badge_official;
+    rolePill.classList.add("official");
+    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    tabCommand.classList.add("active");
+    document.getElementById("view-command").classList.add("active");
+    loadCommandCenter();
+  }else{
+    tabReport.style.display = "inline-block";
+    tabCurrency.style.display = "inline-block";
+    tabCommand.style.display = "none";
+    rolePill.textContent = dict.role_badge_citizen;
+    rolePill.classList.remove("official");
+    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    tabReport.classList.add("active");
+    document.getElementById("view-report").classList.add("active");
+  }
+}
+
+function enterApp(role){
+  sessionStorage.setItem(ROLE_SESSION_KEY, role);
+  document.getElementById("login-shell").style.display = "none";
+  document.getElementById("app-shell").style.display = "block";
+  applyRoleUI(role);
+}
+
+document.getElementById("role-citizen-btn").addEventListener("click", ()=>{
+  enterApp("citizen");
+});
+
+document.getElementById("official-login-btn").addEventListener("click", async ()=>{
+  const dict = getDict(currentLang);
+  const codeInput = document.getElementById("official-access-code");
+  const errorBox = document.getElementById("login-error");
+  const btn = document.getElementById("official-login-btn");
+  const code = codeInput.value.trim();
+  errorBox.style.display = "none";
+  if(!code) return;
+
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = dict.login_checking;
+
+  try{
+    const res = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+    if(data.ok){
+      enterApp("official");
+    }else{
+      errorBox.textContent = dict.login_invalid_code;
+      errorBox.style.display = "block";
+    }
+  }catch(e){
+    errorBox.textContent = dict.login_invalid_code;
+    errorBox.style.display = "block";
+    console.error(e);
+  }finally{
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+});
+
+document.getElementById("official-access-code").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter") document.getElementById("official-login-btn").click();
+});
+
+document.getElementById("logout-btn").addEventListener("click", ()=>{
+  sessionStorage.removeItem(ROLE_SESSION_KEY);
+  document.getElementById("app-shell").style.display = "none";
+  document.getElementById("login-shell").style.display = "flex";
+  document.getElementById("official-access-code").value = "";
+  document.getElementById("login-error").style.display = "none";
+});
+
 // initial paint
 applyTranslations("en");
 if(document.getElementById("view-command").classList.contains("active")) loadCommandCenter();
+
+// resume an existing role session, or show the login screen
+const existingRole = sessionStorage.getItem(ROLE_SESSION_KEY);
+if(existingRole){
+  document.getElementById("login-shell").style.display = "none";
+  document.getElementById("app-shell").style.display = "block";
+  applyRoleUI(existingRole);
+}
 </script>
 </body>
 </html>
