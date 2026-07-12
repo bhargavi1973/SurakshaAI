@@ -314,8 +314,46 @@
   }
   .export-btn-group{display:flex;gap:6px;flex-wrap:wrap;}
   .export-btn-group .export-btn{padding:6px 9px;font-size:10.5px;}
+
+  /* ---------- NCRB complaint draft box ---------- */
+  .ncrb-draft-box{
+    margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:10px;
+    background:var(--panel-2);
+  }
+  .ncrb-draft-header{
+    display:flex;align-items:center;justify-content:space-between;
+    font-weight:700;font-size:13px;margin-bottom:8px;color:var(--text);
+  }
+  .ncrb-draft-textarea{
+    width:100%;min-height:220px;background:var(--ink);color:var(--text);
+    border:1px solid var(--line);border-radius:8px;padding:10px;
+    font-family:var(--font-mono);font-size:11.5px;line-height:1.5;resize:vertical;
+  }
+  .ncrb-draft-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  .ncrb-draft-disclaimer{font-size:11px;color:var(--text-dim);margin-top:8px;line-height:1.5;}
+
+  /* ---------- analytics charts ---------- */
+  .analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;}
+  .chart-card-wide{grid-column:1 / -1;}
+  .chart-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:18px;position:relative;
+  }
+  .chart-card-title{
+    font-size:12px;font-weight:700;color:var(--text-dim);text-transform:uppercase;
+    letter-spacing:0.04em;margin-bottom:14px;
+  }
+  body.script-active .chart-card-title{text-transform:none;}
+  .chart-card-body{position:relative;height:230px;}
+  .chart-card-wide .chart-card-body{height:200px;}
+  .chart-empty{
+    display:flex;align-items:center;justify-content:center;height:100%;
+    color:var(--text-dim);font-size:12.5px;text-align:center;
+  }
+  @media (max-width:760px){.analytics-grid{grid-template-columns:1fr;}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -524,6 +562,31 @@
       <div class="stat-card">
         <p class="stat-num" id="stat-currency-flagged" style="color:var(--danger);">0</p>
         <div class="stat-label" data-i18n="stat_currency_flagged">Notes flagged suspicious</div>
+      </div>
+    </div>
+
+    <div class="section-title"><span data-i18n="section_analytics">Analytics</span></div>
+    <div class="analytics-grid">
+      <div class="chart-card">
+        <div class="chart-card-title" data-i18n="chart_scam_types">Reports by Scam Type</div>
+        <div class="chart-card-body">
+          <canvas id="chart-scam-types"></canvas>
+          <div class="chart-empty" id="chart-scam-types-empty" data-i18n="chart_no_data" style="display:none;">Not enough data yet</div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title" data-i18n="chart_denominations">Currency Checks by Denomination</div>
+        <div class="chart-card-body">
+          <canvas id="chart-denominations"></canvas>
+          <div class="chart-empty" id="chart-denominations-empty" data-i18n="chart_no_data" style="display:none;">Not enough data yet</div>
+        </div>
+      </div>
+      <div class="chart-card chart-card-wide">
+        <div class="chart-card-title" data-i18n="chart_trend">Reports Over Time (last 14 days)</div>
+        <div class="chart-card-body">
+          <canvas id="chart-trend"></canvas>
+          <div class="chart-empty" id="chart-trend-empty" data-i18n="chart_no_data" style="display:none;">Not enough data yet</div>
+        </div>
       </div>
     </div>
 
@@ -1233,7 +1296,12 @@ en: {
   login_invalid_code:"Incorrect access code. Please try again.",
   logout_btn:"Switch role", role_badge_citizen:"CITIZEN", role_badge_official:"CYBER OFFICIAL",
   label_front_side:"Front side (required)", label_back_side:"Back side (optional — improves accuracy)",
-  dropzone_front:"Tap to upload front", dropzone_back:"Tap to upload back"
+  dropzone_front:"Tap to upload front", dropzone_back:"Tap to upload back",
+  ncrb_action_btn:"Generate NCRB complaint draft", ncrb_draft_title:"NCRB Complaint Draft",
+  ncrb_draft_copy:"Copy text", ncrb_draft_copied:"Copied!", ncrb_draft_download:"Download .txt", ncrb_draft_close:"Close",
+  ncrb_draft_disclaimer:"Auto-generated draft to help you file faster. Review, correct, and complete it before submitting on cybercrime.gov.in — Suraksha Grid does not submit anything on your behalf.",
+  section_analytics:"Analytics", chart_scam_types:"Reports by Scam Type", chart_denominations:"Currency Checks by Denomination",
+  chart_trend:"Reports Over Time (last 14 days)", chart_no_data:"Not enough data yet"
 },
 hi: {
   login_eyebrow:"आप सुरक्षा ग्रिड तक कैसे पहुँच रहे हैं चुनें",
@@ -1243,7 +1311,12 @@ hi: {
   login_invalid_code:"गलत एक्सेस कोड। कृपया फिर से प्रयास करें।",
   logout_btn:"भूमिका बदलें", role_badge_citizen:"नागरिक", role_badge_official:"साइबर अधिकारी",
   label_front_side:"आगे का हिस्सा (आवश्यक)", label_back_side:"पीछे का हिस्सा (वैकल्पिक — सटीकता बढ़ाता है)",
-  dropzone_front:"आगे की फोटो अपलोड करने के लिए टैप करें", dropzone_back:"पीछे की फोटो अपलोड करने के लिए टैप करें"
+  dropzone_front:"आगे की फोटो अपलोड करने के लिए टैप करें", dropzone_back:"पीछे की फोटो अपलोड करने के लिए टैप करें",
+  ncrb_action_btn:"NCRB शिकायत मसौदा बनाएं", ncrb_draft_title:"NCRB शिकायत मसौदा",
+  ncrb_draft_copy:"टेक्स्ट कॉपी करें", ncrb_draft_copied:"कॉपी हो गया!", ncrb_draft_download:"डाउनलोड .txt", ncrb_draft_close:"बंद करें",
+  ncrb_draft_disclaimer:"तेज़ी से शिकायत दर्ज करने में मदद के लिए स्वतः-जनित मसौदा। cybercrime.gov.in पर सबमिट करने से पहले समीक्षा करें, सुधारें और पूरा करें — सुरक्षा ग्रिड आपकी ओर से कुछ भी सबमिट नहीं करता।",
+  section_analytics:"विश्लेषण", chart_scam_types:"धोखाधड़ी के प्रकार अनुसार रिपोर्टें", chart_denominations:"मूल्यवर्ग अनुसार करेंसी जांच",
+  chart_trend:"समय के साथ रिपोर्टें (पिछले 14 दिन)", chart_no_data:"अभी पर्याप्त डेटा नहीं है"
 },
 ta: {
   login_eyebrow:"சுரக்ஷா கிரிட்டை நீங்கள் எவ்வாறு அணுகுகிறீர்கள் என்பதைத் தேர்ந்தெடுக்கவும்",
@@ -1253,7 +1326,12 @@ ta: {
   login_invalid_code:"தவறான அணுகல் குறியீடு. மீண்டும் முயற்சிக்கவும்.",
   logout_btn:"பங்கை மாற்று", role_badge_citizen:"குடிமகன்", role_badge_official:"சைபர் அதிகாரி",
   label_front_side:"முன் பக்கம் (அவசியம்)", label_back_side:"பின் பக்கம் (விருப்பம் — துல்லியத்தை மேம்படுத்துகிறது)",
-  dropzone_front:"முன் புகைப்படத்தை பதிவேற்ற தட்டவும்", dropzone_back:"பின் புகைப்படத்தை பதிவேற்ற தட்டவும்"
+  dropzone_front:"முன் புகைப்படத்தை பதிவேற்ற தட்டவும்", dropzone_back:"பின் புகைப்படத்தை பதிவேற்ற தட்டவும்",
+  ncrb_action_btn:"NCRB புகார் வரைவை உருவாக்கவும்", ncrb_draft_title:"NCRB புகார் வரைவு",
+  ncrb_draft_copy:"உரையை நகலெடுக்கவும்", ncrb_draft_copied:"நகலெடுக்கப்பட்டது!", ncrb_draft_download:".txt பதிவிறக்கவும்", ncrb_draft_close:"மூடு",
+  ncrb_draft_disclaimer:"விரைவாக புகார் அளிக்க உதவும் தானாக உருவாக்கப்பட்ட வரைவு. cybercrime.gov.in இல் சமர்ப்பிக்கும் முன் மதிப்பாய்வு செய்து, திருத்தி, முடிக்கவும் — சுரக்ஷா கிரிட் உங்கள் சார்பாக எதையும் சமர்ப்பிக்காது.",
+  section_analytics:"பகுப்பாய்வு", chart_scam_types:"மோசடி வகை வாரியான அறிக்கைகள்", chart_denominations:"மதிப்பு வாரியான நாணய சரிபார்ப்புகள்",
+  chart_trend:"காலப்போக்கில் அறிக்கைகள் (கடந்த 14 நாட்கள்)", chart_no_data:"இன்னும் போதுமான தரவு இல்லை"
 },
 te: {
   login_eyebrow:"మీరు సురక్ష గ్రిడ్‌ను ఎలా యాక్సెస్ చేస్తున్నారో ఎంచుకోండి",
@@ -1263,7 +1341,12 @@ te: {
   login_invalid_code:"తప్పు యాక్సెస్ కోడ్. దయచేసి మళ్లీ ప్రయత్నించండి.",
   logout_btn:"పాత్రను మార్చండి", role_badge_citizen:"పౌరుడు", role_badge_official:"సైబర్ అధికారి",
   label_front_side:"ముందు వైపు (అవసరం)", label_back_side:"వెనుక వైపు (ఐచ్ఛికం — ఖచ్చితత్వాన్ని మెరుగుపరుస్తుంది)",
-  dropzone_front:"ముందు ఫోటోను అప్‌లోడ్ చేయడానికి నొక్కండి", dropzone_back:"వెనుక ఫోటోను అప్‌లోడ్ చేయడానికి నొక్కండి"
+  dropzone_front:"ముందు ఫోటోను అప్‌లోడ్ చేయడానికి నొక్కండి", dropzone_back:"వెనుక ఫోటోను అప్‌లోడ్ చేయడానికి నొక్కండి",
+  ncrb_action_btn:"NCRB ఫిర్యాదు ముసాయిదాను రూపొందించండి", ncrb_draft_title:"NCRB ఫిర్యాదు ముసాయిదా",
+  ncrb_draft_copy:"టెక్స్ట్ కాపీ చేయండి", ncrb_draft_copied:"కాపీ చేయబడింది!", ncrb_draft_download:".txt డౌన్‌లోడ్ చేయండి", ncrb_draft_close:"మూసివేయండి",
+  ncrb_draft_disclaimer:"వేగంగా ఫిర్యాదు చేయడంలో సహాయపడటానికి స్వయంచాలకంగా రూపొందించిన ముసాయిదా. cybercrime.gov.in లో సమర్పించే ముందు సమీక్షించి, సరిచేసి, పూర్తి చేయండి — సురక్ష గ్రిడ్ మీ తరపున దేనినీ సమర్పించదు.",
+  section_analytics:"విశ్లేషణ", chart_scam_types:"మోసం రకం వారీగా నివేదికలు", chart_denominations:"విలువ వారీగా కరెన్సీ తనిఖీలు",
+  chart_trend:"కాలక్రమేణా నివేదికలు (గత 14 రోజులు)", chart_no_data:"ఇంకా తగినంత డేటా లేదు"
 },
 bn: {
   login_eyebrow:"আপনি সুরক্ষা গ্রিড কীভাবে অ্যাক্সেস করছেন তা বেছে নিন",
@@ -1273,7 +1356,12 @@ bn: {
   login_invalid_code:"ভুল অ্যাক্সেস কোড। আবার চেষ্টা করুন।",
   logout_btn:"ভূমিকা পরিবর্তন করুন", role_badge_citizen:"নাগরিক", role_badge_official:"সাইবার অফিসার",
   label_front_side:"সামনের দিক (আবশ্যক)", label_back_side:"পিছনের দিক (ঐচ্ছিক — নির্ভুলতা বাড়ায়)",
-  dropzone_front:"সামনের ছবি আপলোড করতে ট্যাপ করুন", dropzone_back:"পিছনের ছবি আপলোড করতে ট্যাপ করুন"
+  dropzone_front:"সামনের ছবি আপলোড করতে ট্যাপ করুন", dropzone_back:"পিছনের ছবি আপলোড করতে ট্যাপ করুন",
+  ncrb_action_btn:"NCRB অভিযোগের খসড়া তৈরি করুন", ncrb_draft_title:"NCRB অভিযোগের খসড়া",
+  ncrb_draft_copy:"টেক্সট কপি করুন", ncrb_draft_copied:"কপি হয়েছে!", ncrb_draft_download:".txt ডাউনলোড করুন", ncrb_draft_close:"বন্ধ করুন",
+  ncrb_draft_disclaimer:"দ্রুত অভিযোগ দায়ের করতে সাহায্য করার জন্য স্বয়ংক্রিয়ভাবে তৈরি খসড়া। cybercrime.gov.in-এ জমা দেওয়ার আগে পর্যালোচনা করুন, সংশোধন করুন এবং সম্পূর্ণ করুন — সুরক্ষা গ্রিড আপনার পক্ষে কিছু জমা দেয় না।",
+  section_analytics:"বিশ্লেষণ", chart_scam_types:"প্রতারণার ধরন অনুযায়ী রিপোর্ট", chart_denominations:"মূল্যমান অনুযায়ী মুদ্রা যাচাই",
+  chart_trend:"সময়ের সাথে রিপোর্ট (গত ১৪ দিন)", chart_no_data:"এখনও পর্যাপ্ত তথ্য নেই"
 },
 mr: {
   login_eyebrow:"तुम्ही सुरक्षा ग्रिड कसे अॅक्सेस करत आहात ते निवडा",
@@ -1283,7 +1371,12 @@ mr: {
   login_invalid_code:"चुकीचा अॅक्सेस कोड. कृपया पुन्हा प्रयत्न करा.",
   logout_btn:"भूमिका बदला", role_badge_citizen:"नागरिक", role_badge_official:"सायबर अधिकारी",
   label_front_side:"पुढील बाजू (आवश्यक)", label_back_side:"मागील बाजू (पर्यायी — अचूकता वाढवते)",
-  dropzone_front:"पुढील फोटो अपलोड करण्यासाठी टॅप करा", dropzone_back:"मागील फोटो अपलोड करण्यासाठी टॅप करा"
+  dropzone_front:"पुढील फोटो अपलोड करण्यासाठी टॅप करा", dropzone_back:"मागील फोटो अपलोड करण्यासाठी टॅप करा",
+  ncrb_action_btn:"NCRB तक्रार मसुदा तयार करा", ncrb_draft_title:"NCRB तक्रार मसुदा",
+  ncrb_draft_copy:"मजकूर कॉपी करा", ncrb_draft_copied:"कॉपी झाले!", ncrb_draft_download:".txt डाउनलोड करा", ncrb_draft_close:"बंद करा",
+  ncrb_draft_disclaimer:"जलद तक्रार दाखल करण्यास मदत करण्यासाठी स्वयंचलितपणे तयार केलेला मसुदा. cybercrime.gov.in वर सबमिट करण्यापूर्वी पुनरावलोकन करा, दुरुस्त करा आणि पूर्ण करा — सुरक्षा ग्रिड तुमच्या वतीने काहीही सबमिट करत नाही.",
+  section_analytics:"विश्लेषण", chart_scam_types:"फसवणुकीच्या प्रकारानुसार तक्रारी", chart_denominations:"मूल्यानुसार चलन तपासणी",
+  chart_trend:"कालांतराने तक्रारी (गेले 14 दिवस)", chart_no_data:"अद्याप पुरेसा डेटा नाही"
 },
 kn: {
   login_eyebrow:"ನೀವು ಸುರಕ್ಷಾ ಗ್ರಿಡ್ ಅನ್ನು ಹೇಗೆ ಪ್ರವೇಶಿಸುತ್ತಿದ್ದೀರಿ ಎಂಬುದನ್ನು ಆಯ್ಕೆಮಾಡಿ",
@@ -1293,7 +1386,12 @@ kn: {
   login_invalid_code:"ತಪ್ಪಾದ ಪ್ರವೇಶ ಕೋಡ್. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   logout_btn:"ಪಾತ್ರವನ್ನು ಬದಲಾಯಿಸಿ", role_badge_citizen:"ನಾಗರಿಕ", role_badge_official:"ಸೈಬರ್ ಅಧಿಕಾರಿ",
   label_front_side:"ಮುಂಭಾಗ (ಅಗತ್ಯ)", label_back_side:"ಹಿಂಭಾಗ (ಐಚ್ಛಿಕ — ನಿಖರತೆಯನ್ನು ಸುಧಾರಿಸುತ್ತದೆ)",
-  dropzone_front:"ಮುಂಭಾಗದ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ", dropzone_back:"ಹಿಂಭಾಗದ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ"
+  dropzone_front:"ಮುಂಭಾಗದ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ", dropzone_back:"ಹಿಂಭಾಗದ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ",
+  ncrb_action_btn:"NCRB ದೂರು ಕರಡನ್ನು ರಚಿಸಿ", ncrb_draft_title:"NCRB ದೂರು ಕರಡು",
+  ncrb_draft_copy:"ಪಠ್ಯವನ್ನು ನಕಲಿಸಿ", ncrb_draft_copied:"ನಕಲಿಸಲಾಗಿದೆ!", ncrb_draft_download:".txt ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ", ncrb_draft_close:"ಮುಚ್ಚಿ",
+  ncrb_draft_disclaimer:"ವೇಗವಾಗಿ ದೂರು ಸಲ್ಲಿಸಲು ಸಹಾಯ ಮಾಡಲು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ರಚಿಸಲಾದ ಕರಡು. cybercrime.gov.in ನಲ್ಲಿ ಸಲ್ಲಿಸುವ ಮೊದಲು ಪರಿಶೀಲಿಸಿ, ಸರಿಪಡಿಸಿ ಮತ್ತು ಪೂರ್ಣಗೊಳಿಸಿ — ಸುರಕ್ಷಾ ಗ್ರಿಡ್ ನಿಮ್ಮ ಪರವಾಗಿ ಏನನ್ನೂ ಸಲ್ಲಿಸುವುದಿಲ್ಲ.",
+  section_analytics:"ವಿಶ್ಲೇಷಣೆ", chart_scam_types:"ವಂಚನೆ ಪ್ರಕಾರದ ಪ್ರಕಾರ ವರದಿಗಳು", chart_denominations:"ಮುಖಬೆಲೆ ಪ್ರಕಾರ ಕರೆನ್ಸಿ ಪರಿಶೀಲನೆಗಳು",
+  chart_trend:"ಕಾಲಾನಂತರದಲ್ಲಿ ವರದಿಗಳು (ಕಳೆದ 14 ದಿನಗಳು)", chart_no_data:"ಇನ್ನೂ ಸಾಕಷ್ಟು ಡೇಟಾ ಇಲ್ಲ"
 },
 gu: {
   login_eyebrow:"તમે સુરક્ષા ગ્રિડને કેવી રીતે એક્સેસ કરી રહ્યા છો તે પસંદ કરો",
@@ -1303,7 +1401,12 @@ gu: {
   login_invalid_code:"ખોટો એક્સેસ કોડ. કૃપા કરી ફરી પ્રયાસ કરો.",
   logout_btn:"ભૂમિકા બદલો", role_badge_citizen:"નાગરિક", role_badge_official:"સાયબર અધિકારી",
   label_front_side:"આગળની બાજુ (જરૂરી)", label_back_side:"પાછળની બાજુ (વૈકલ્પિક — ચોકસાઈ સુધારે છે)",
-  dropzone_front:"આગળનો ફોટો અપલોડ કરવા ટેપ કરો", dropzone_back:"પાછળનો ફોટો અપલોડ કરવા ટેપ કરો"
+  dropzone_front:"આગળનો ફોટો અપલોડ કરવા ટેપ કરો", dropzone_back:"પાછળનો ફોટો અપલોડ કરવા ટેપ કરો",
+  ncrb_action_btn:"NCRB ફરિયાદ ડ્રાફ્ટ બનાવો", ncrb_draft_title:"NCRB ફરિયાદ ડ્રાફ્ટ",
+  ncrb_draft_copy:"ટેક્સ્ટ કૉપિ કરો", ncrb_draft_copied:"કૉપિ થયું!", ncrb_draft_download:".txt ડાઉનલોડ કરો", ncrb_draft_close:"બંધ કરો",
+  ncrb_draft_disclaimer:"ઝડપથી ફરિયાદ નોંધવામાં મદદ કરવા માટે સ્વયં-જનરેટેડ ડ્રાફ્ટ. cybercrime.gov.in પર સબમિટ કરતા પહેલા સમીક્ષા કરો, સુધારો અને પૂર્ણ કરો — સુરક્ષા ગ્રિડ તમારા વતી કંઈપણ સબમિટ કરતું નથી.",
+  section_analytics:"વિશ્લેષણ", chart_scam_types:"છેતરપિંડીના પ્રકાર મુજબ રિપોર્ટ્સ", chart_denominations:"મૂલ્ય મુજબ ચલણ ચકાસણી",
+  chart_trend:"સમય જતાં રિપોર્ટ્સ (છેલ્લા 14 દિવસ)", chart_no_data:"હજુ પૂરતો ડેટા નથી"
 },
 ml: {
   login_eyebrow:"നിങ്ങൾ സുരക്ഷാ ഗ്രിഡ് എങ്ങനെ ആക്‌സസ് ചെയ്യുന്നു എന്ന് തിരഞ്ഞെടുക്കുക",
@@ -1313,7 +1416,12 @@ ml: {
   login_invalid_code:"തെറ്റായ ആക്‌സസ് കോഡ്. ദയവായി വീണ്ടും ശ്രമിക്കുക.",
   logout_btn:"റോൾ മാറ്റുക", role_badge_citizen:"പൗരൻ", role_badge_official:"സൈബർ ഓഫീസർ",
   label_front_side:"മുൻവശം (ആവശ്യമാണ്)", label_back_side:"പിൻവശം (ഓപ്ഷണൽ — കൃത്യത മെച്ചപ്പെടുത്തുന്നു)",
-  dropzone_front:"മുൻവശ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യാൻ ടാപ്പ് ചെയ്യുക", dropzone_back:"പിൻവശ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യാൻ ടാപ്പ് ചെയ്യുക"
+  dropzone_front:"മുൻവശ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യാൻ ടാപ്പ് ചെയ്യുക", dropzone_back:"പിൻവശ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യാൻ ടാപ്പ് ചെയ്യുക",
+  ncrb_action_btn:"NCRB പരാതി ഡ്രാഫ്റ്റ് സൃഷ്ടിക്കുക", ncrb_draft_title:"NCRB പരാതി ഡ്രാഫ്റ്റ്",
+  ncrb_draft_copy:"ടെക്സ്റ്റ് പകർത്തുക", ncrb_draft_copied:"പകർത്തി!", ncrb_draft_download:".txt ഡൗൺലോഡ് ചെയ്യുക", ncrb_draft_close:"അടയ്ക്കുക",
+  ncrb_draft_disclaimer:"വേഗത്തിൽ പരാതി ഫയൽ ചെയ്യാൻ സഹായിക്കുന്നതിന് സ്വയമേവ സൃഷ്ടിച്ച ഡ്രാഫ്റ്റ്. cybercrime.gov.in ൽ സമർപ്പിക്കുന്നതിന് മുമ്പ് അവലോകനം ചെയ്ത്, ശരിയാക്കി, പൂർത്തിയാക്കുക — സുരക്ഷാ ഗ്രിഡ് നിങ്ങൾക്ക് വേണ്ടി ഒന്നും സമർപ്പിക്കുന്നില്ല.",
+  section_analytics:"വിശകലനം", chart_scam_types:"തട്ടിപ്പ് തരം അനുസരിച്ചുള്ള റിപ്പോർട്ടുകൾ", chart_denominations:"മൂല്യം അനുസരിച്ചുള്ള കറൻസി പരിശോധനകൾ",
+  chart_trend:"കാലക്രമേണ റിപ്പോർട്ടുകൾ (കഴിഞ്ഞ 14 ദിവസം)", chart_no_data:"ഇതുവരെ മതിയായ ഡാറ്റയില്ല"
 },
 pa: {
   login_eyebrow:"ਤੁਸੀਂ ਸੁਰਕਸ਼ਾ ਗਰਿੱਡ ਤੱਕ ਕਿਵੇਂ ਪਹੁੰਚ ਰਹੇ ਹੋ ਚੁਣੋ",
@@ -1323,7 +1431,12 @@ pa: {
   login_invalid_code:"ਗਲਤ ਐਕਸੈਸ ਕੋਡ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
   logout_btn:"ਭੂਮਿਕਾ ਬਦਲੋ", role_badge_citizen:"ਨਾਗਰਿਕ", role_badge_official:"ਸਾਈਬਰ ਅਧਿਕਾਰੀ",
   label_front_side:"ਅਗਲਾ ਪਾਸਾ (ਲੋੜੀਂਦਾ)", label_back_side:"ਪਿਛਲਾ ਪਾਸਾ (ਵਿਕਲਪਿਕ — ਸ਼ੁੱਧਤਾ ਵਧਾਉਂਦਾ ਹੈ)",
-  dropzone_front:"ਅਗਲੀ ਫੋਟੋ ਅੱਪਲੋਡ ਕਰਨ ਲਈ ਟੈਪ ਕਰੋ", dropzone_back:"ਪਿਛਲੀ ਫੋਟੋ ਅੱਪਲੋਡ ਕਰਨ ਲਈ ਟੈਪ ਕਰੋ"
+  dropzone_front:"ਅਗਲੀ ਫੋਟੋ ਅੱਪਲੋਡ ਕਰਨ ਲਈ ਟੈਪ ਕਰੋ", dropzone_back:"ਪਿਛਲੀ ਫੋਟੋ ਅੱਪਲੋਡ ਕਰਨ ਲਈ ਟੈਪ ਕਰੋ",
+  ncrb_action_btn:"NCRB ਸ਼ਿਕਾਇਤ ਡਰਾਫਟ ਬਣਾਓ", ncrb_draft_title:"NCRB ਸ਼ਿਕਾਇਤ ਡਰਾਫਟ",
+  ncrb_draft_copy:"ਟੈਕਸਟ ਕਾਪੀ ਕਰੋ", ncrb_draft_copied:"ਕਾਪੀ ਹੋ ਗਿਆ!", ncrb_draft_download:".txt ਡਾਊਨਲੋਡ ਕਰੋ", ncrb_draft_close:"ਬੰਦ ਕਰੋ",
+  ncrb_draft_disclaimer:"ਤੇਜ਼ੀ ਨਾਲ ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰਨ ਵਿੱਚ ਮਦਦ ਲਈ ਸਵੈ-ਤਿਆਰ ਡਰਾਫਟ। cybercrime.gov.in 'ਤੇ ਸਬਮਿਟ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਸਮੀਖਿਆ ਕਰੋ, ਠੀਕ ਕਰੋ ਅਤੇ ਪੂਰਾ ਕਰੋ — ਸੁਰਕਸ਼ਾ ਗਰਿੱਡ ਤੁਹਾਡੀ ਤਰਫੋਂ ਕੁਝ ਵੀ ਸਬਮਿਟ ਨਹੀਂ ਕਰਦਾ।",
+  section_analytics:"ਵਿਸ਼ਲੇਸ਼ਣ", chart_scam_types:"ਧੋਖਾਧੜੀ ਦੀ ਕਿਸਮ ਅਨੁਸਾਰ ਰਿਪੋਰਟਾਂ", chart_denominations:"ਮੁੱਲ ਅਨੁਸਾਰ ਕਰੰਸੀ ਜਾਂਚਾਂ",
+  chart_trend:"ਸਮੇਂ ਦੇ ਨਾਲ ਰਿਪੋਰਟਾਂ (ਪਿਛਲੇ 14 ਦਿਨ)", chart_no_data:"ਅਜੇ ਤੱਕ ਲੋੜੀਂਦਾ ਡਾਟਾ ਨਹੀਂ"
 },
 or: {
   login_eyebrow:"ଆପଣ ସୁରକ୍ଷା ଗ୍ରିଡ୍ କିପରି ଆକ୍ସେସ୍ କରୁଛନ୍ତି ବାଛନ୍ତୁ",
@@ -1333,7 +1446,12 @@ or: {
   login_invalid_code:"ଭୁଲ ଆକ୍ସେସ୍ କୋଡ୍। ଦୟାକରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।",
   logout_btn:"ଭୂମିକା ବଦଳାନ୍ତୁ", role_badge_citizen:"ନାଗରିକ", role_badge_official:"ସାଇବର ଅଧିକାରୀ",
   label_front_side:"ଆଗ ପାର୍ଶ୍ୱ (ଆବଶ୍ୟକ)", label_back_side:"ପଛ ପାର୍ଶ୍ୱ (ବୈକଳ୍ପିକ — ସଠିକତାକୁ ବଢାଏ)",
-  dropzone_front:"ଆଗ ଫଟୋ ଅପଲୋଡ୍ କରିବାକୁ ଟାପ୍ କରନ୍ତୁ", dropzone_back:"ପଛ ଫଟୋ ଅପଲୋଡ୍ କରିବାକୁ ଟାପ୍ କରନ୍ତୁ"
+  dropzone_front:"ଆଗ ଫଟୋ ଅପଲୋଡ୍ କରିବାକୁ ଟାପ୍ କରନ୍ତୁ", dropzone_back:"ପଛ ଫଟୋ ଅପଲୋଡ୍ କରିବାକୁ ଟାପ୍ କରନ୍ତୁ",
+  ncrb_action_btn:"NCRB ଅଭିଯୋଗ ଡ୍ରାଫ୍ଟ ତିଆରି କରନ୍ତୁ", ncrb_draft_title:"NCRB ଅଭିଯୋଗ ଡ୍ରାଫ୍ଟ",
+  ncrb_draft_copy:"ଟେକ୍ସଟ୍ କପି କରନ୍ତୁ", ncrb_draft_copied:"କପି ହୋଇଗଲା!", ncrb_draft_download:".txt ଡାଉନଲୋଡ୍ କରନ୍ତୁ", ncrb_draft_close:"ବନ୍ଦ କରନ୍ତୁ",
+  ncrb_draft_disclaimer:"ଶୀଘ୍ର ଅଭିଯୋଗ ଦାଖଲ କରିବାରେ ସାହାଯ୍ୟ ପାଇଁ ସ୍ୱୟଂ-ସୃଷ୍ଟ ଡ୍ରାଫ୍ଟ। cybercrime.gov.in ରେ ଦାଖଲ କରିବା ପୂର୍ବରୁ ସମୀକ୍ଷା କରନ୍ତୁ, ସଂଶୋଧନ କରନ୍ତୁ ଏବଂ ସମ୍ପୂର୍ଣ୍ଣ କରନ୍ତୁ — ସୁରକ୍ଷା ଗ୍ରିଡ୍ ଆପଣଙ୍କ ପକ୍ଷରୁ କିଛି ଦାଖଲ କରେ ନାହିଁ।",
+  section_analytics:"ବିଶ୍ଳେଷଣ", chart_scam_types:"ଠକେଇ ପ୍ରକାର ଅନୁସାରେ ରିପୋର୍ଟ", chart_denominations:"ମୂଲ୍ୟ ଅନୁସାରେ ମୁଦ୍ରା ଯାଞ୍ଚ",
+  chart_trend:"ସମୟ ସହିତ ରିପୋର୍ଟ (ଗତ 14 ଦିନ)", chart_no_data:"ଏପର୍ଯ୍ୟନ୍ତ ପର୍ଯ୍ୟାପ୍ତ ତଥ୍ୟ ନାହିଁ"
 },
 ur: {
   login_eyebrow:"آپ سراکشا گرڈ تک کیسے رسائی حاصل کر رہے ہیں منتخب کریں",
@@ -1343,7 +1461,12 @@ ur: {
   login_invalid_code:"غلط رسائی کوڈ۔ براہ کرم دوبارہ کوشش کریں۔",
   logout_btn:"کردار تبدیل کریں", role_badge_citizen:"شہری", role_badge_official:"سائبر آفیسر",
   label_front_side:"اگلا حصہ (لازمی)", label_back_side:"پچھلا حصہ (اختیاری — درستگی بہتر بناتا ہے)",
-  dropzone_front:"اگلی تصویر اپ لوڈ کرنے کے لیے تھپتھپائیں", dropzone_back:"پچھلی تصویر اپ لوڈ کرنے کے لیے تھپتھپائیں"
+  dropzone_front:"اگلی تصویر اپ لوڈ کرنے کے لیے تھپتھپائیں", dropzone_back:"پچھلی تصویر اپ لوڈ کرنے کے لیے تھپتھپائیں",
+  ncrb_action_btn:"NCRB شکایت کا مسودہ بنائیں", ncrb_draft_title:"NCRB شکایت کا مسودہ",
+  ncrb_draft_copy:"متن کاپی کریں", ncrb_draft_copied:"کاپی ہو گیا!", ncrb_draft_download:".txt ڈاؤن لوڈ کریں", ncrb_draft_close:"بند کریں",
+  ncrb_draft_disclaimer:"تیزی سے شکایت درج کرنے میں مدد کے لیے خودکار مسودہ۔ cybercrime.gov.in پر جمع کرانے سے پہلے جائزہ لیں، درست کریں اور مکمل کریں — سراکشا گرڈ آپ کی طرف سے کچھ بھی جمع نہیں کراتا۔",
+  section_analytics:"تجزیہ", chart_scam_types:"فراڈ کی قسم کے مطابق رپورٹس", chart_denominations:"مالیت کے مطابق کرنسی چیکس",
+  chart_trend:"وقت کے ساتھ رپورٹس (پچھلے 14 دن)", chart_no_data:"ابھی تک کافی ڈیٹا نہیں ہے"
 }
 };
 
@@ -1478,6 +1601,8 @@ document.getElementById("btn-analyze").addEventListener("click", async ()=>{
   try{
     const payload = { number, claim: selectedClaim, description, method, langCode: currentLang };
     const result = await classifyReport(payload);
+    lastReportPayload = payload;
+    lastReportResult = result;
     renderResult(result);
     await saveReport(payload, result);
   }catch(err){
@@ -1488,6 +1613,11 @@ document.getElementById("btn-analyze").addEventListener("click", async ()=>{
     btn.textContent = dict.btn_analyze;
   }
 });
+
+/* Holds the most recently submitted report, so the NCRB draft generator
+   (triggered separately, after the verdict renders) has data to work with. */
+let lastReportPayload = null;
+let lastReportResult = null;
 
 function renderResult(result){
   const dict = getDict(currentLang);
@@ -1505,8 +1635,22 @@ function renderResult(result){
     <div class="action-row">
       <a class="action-link primary" href="https://www.cybercrime.gov.in" target="_blank" rel="noopener">${escapeHtml(dict.action_file)}</a>
       <a class="action-link" href="tel:1930">${escapeHtml(dict.action_call)}</a>
+      <button class="action-link" onclick="toggleNcrbDraft()">${escapeHtml(dict.ncrb_action_btn)}</button>
     </div>
     <div class="note">${escapeHtml(result.recommended_action || "")} — ${escapeHtml(dict.note_suffix)}</div>
+
+    <div class="ncrb-draft-box" id="ncrb-draft-box" style="display:none;">
+      <div class="ncrb-draft-header">
+        <span>${escapeHtml(dict.ncrb_draft_title)}</span>
+        <button class="export-btn" onclick="document.getElementById('ncrb-draft-box').style.display='none';">${escapeHtml(dict.ncrb_draft_close)}</button>
+      </div>
+      <textarea id="ncrb-draft-text" class="ncrb-draft-textarea" readonly></textarea>
+      <div class="ncrb-draft-actions">
+        <button class="export-btn" onclick="copyNcrbDraft(this)">${escapeHtml(dict.ncrb_draft_copy)}</button>
+        <button class="export-btn" onclick="downloadNcrbDraft()">${escapeHtml(dict.ncrb_draft_download)}</button>
+      </div>
+      <div class="ncrb-draft-disclaimer">${escapeHtml(dict.ncrb_draft_disclaimer)}</div>
+    </div>
   `;
 }
 
@@ -1514,6 +1658,92 @@ function escapeHtml(str){
   const d = document.createElement("div");
   d.textContent = str == null ? "" : str;
   return d.innerHTML;
+}
+
+/* ============================================================
+   NCRB COMPLAINT DRAFT
+   Template-based (not LLM-generated) so the output is deterministic
+   and reviewable -- important for anything that might end up feeding
+   into an actual legal complaint. Assembled from the citizen's own
+   submitted report plus the risk-classification output.
+   ============================================================ */
+
+function buildNcrbDraftText(payload, result){
+  const now = new Date().toLocaleString();
+  const flags = (result.red_flags || []).map(f => "- " + f).join("\n") || "- None specifically flagged";
+
+  return `CYBER CRIME COMPLAINT — DRAFT FOR NCRB PORTAL (cybercrime.gov.in)
+Generated by Suraksha Grid — Digital Public Safety Intelligence Platform
+Draft prepared on: ${now}
+
+SUGGESTED CATEGORY (select closest match on the portal):
+${result.scam_type || "Cyber Fraud / Impersonation"}
+
+INCIDENT DATE/TIME (edit if different from when you are filing this):
+${now}
+
+STATE / DISTRICT (fill in):
+
+
+SUSPECT CONTACT DETAILS
+Phone/sender number: ${payload.number || "Not provided"}
+Contact method: ${payload.method || "Not specified"}
+
+INCIDENT DESCRIPTION
+${payload.description || ""}
+
+AUTOMATED SCREENING NOTES (for reference only — verify before submission)
+Suspected scam type: ${result.scam_type || "Unclassified"}
+Risk assessment: ${(result.risk_level || "").toUpperCase()} (${Math.round((result.confidence || 0) * 100)}% confidence)
+Red flags identified:
+${flags}
+
+REQUESTED ACTION
+Investigation and appropriate action against the identified contact under applicable cyber fraud / impersonation provisions.
+
+---
+This draft was auto-generated by Suraksha Grid to help you file a complaint faster. Please
+review, correct, and complete every field before submitting on cybercrime.gov.in. Suraksha
+Grid does not submit this on your behalf and has not verified the incident independently.`;
+}
+
+function toggleNcrbDraft(){
+  const box = document.getElementById("ncrb-draft-box");
+  if(!box) return;
+  const isHidden = box.style.display === "none" || !box.style.display;
+  if(isHidden){
+    if(lastReportPayload && lastReportResult){
+      document.getElementById("ncrb-draft-text").value = buildNcrbDraftText(lastReportPayload, lastReportResult);
+    }
+    box.style.display = "block";
+  }else{
+    box.style.display = "none";
+  }
+}
+
+async function copyNcrbDraft(btn){
+  const dict = getDict(currentLang);
+  const textarea = document.getElementById("ncrb-draft-text");
+  const original = btn.textContent;
+  try{
+    await navigator.clipboard.writeText(textarea.value);
+  }catch(e){
+    textarea.select();
+    try{ document.execCommand("copy"); }catch(e2){ /* clipboard unavailable */ }
+  }
+  btn.textContent = dict.ncrb_draft_copied;
+  setTimeout(()=>{ btn.textContent = original; }, 1500);
+}
+
+function downloadNcrbDraft(){
+  const textarea = document.getElementById("ncrb-draft-text");
+  const blob = new Blob([textarea.value], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "ncrb_complaint_draft.txt";
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 // ---------- persistence ----------
@@ -2105,7 +2335,152 @@ loadCommandCenter = async function(){
       `;
     }).join("");
   }
+
+  const reports = await getAllReports();
+  renderAnalyticsCharts(reports, currencyReports);
 };
+
+/* ============================================================
+   ANALYTICS CHARTS (Chart.js) — scam type breakdown, currency
+   denomination breakdown, and a reports-over-time trend line.
+   Instances are kept in module scope and updated in place on each
+   refresh, rather than recreated, to avoid leaking canvas contexts.
+   ============================================================ */
+
+let scamTypeChart = null;
+let denominationChart = null;
+let trendChart = null;
+
+const CHART_PALETTE = ["#3B82F6", "#E23D28", "#F0A93B", "#2BB673", "#A78BFA", "#F472B6", "#38BDF8", "#FBBF24"];
+
+if(window.Chart){
+  Chart.defaults.color = "#8C97B2";
+  Chart.defaults.font.family = "Inter, system-ui, sans-serif";
+  Chart.defaults.plugins.legend.labels.boxWidth = 10;
+  Chart.defaults.plugins.legend.labels.font = { size: 10.5 };
+}
+
+function toggleChartEmpty(canvasId, isEmpty){
+  const canvas = document.getElementById(canvasId);
+  const emptyLabel = document.getElementById(canvasId + "-empty");
+  if(canvas) canvas.style.display = isEmpty ? "none" : "block";
+  if(emptyLabel) emptyLabel.style.display = isEmpty ? "flex" : "none";
+}
+
+function renderAnalyticsCharts(reports, currencyReports){
+  if(!window.Chart) return;
+
+  // --- Reports by scam type (doughnut) ---
+  const scamTypeCounts = {};
+  reports.forEach(r => {
+    const key = r.scam_type || "Unclassified";
+    scamTypeCounts[key] = (scamTypeCounts[key] || 0) + 1;
+  });
+  const scamTypeLabels = Object.keys(scamTypeCounts);
+  const scamTypeData = Object.values(scamTypeCounts);
+  toggleChartEmpty("chart-scam-types", scamTypeLabels.length === 0);
+  if(scamTypeLabels.length > 0){
+    const ctx1 = document.getElementById("chart-scam-types").getContext("2d");
+    const data1 = {
+      labels: scamTypeLabels,
+      datasets: [{ data: scamTypeData, backgroundColor: scamTypeLabels.map((_,i)=>CHART_PALETTE[i % CHART_PALETTE.length]), borderWidth: 0 }]
+    };
+    if(scamTypeChart){
+      scamTypeChart.data = data1;
+      scamTypeChart.update();
+    }else{
+      scamTypeChart = new Chart(ctx1, {
+        type: "doughnut",
+        data: data1,
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "right" } } }
+      });
+    }
+  }
+
+  // --- Currency checks by denomination (bar) ---
+  const denomCounts = {};
+  currencyReports.forEach(r => {
+    const key = r.denomination || "Unclear";
+    denomCounts[key] = (denomCounts[key] || 0) + 1;
+  });
+  const denomLabels = Object.keys(denomCounts);
+  const denomData = Object.values(denomCounts);
+  toggleChartEmpty("chart-denominations", denomLabels.length === 0);
+  if(denomLabels.length > 0){
+    const ctx2 = document.getElementById("chart-denominations").getContext("2d");
+    const data2 = {
+      labels: denomLabels,
+      datasets: [{ data: denomData, backgroundColor: "#3B82F6", borderRadius: 4, maxBarThickness: 36 }]
+    };
+    if(denominationChart){
+      denominationChart.data = data2;
+      denominationChart.update();
+    }else{
+      denominationChart = new Chart(ctx2, {
+        type: "bar",
+        data: data2,
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: "rgba(255,255,255,0.06)" } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+  }
+
+  // --- Reports over time, last 14 days (line, two series) ---
+  const days = [];
+  const today = new Date();
+  for(let i = 13; i >= 0; i--){
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    days.push(d.toISOString().slice(0, 10));
+  }
+  function countByDay(list){
+    const counts = {};
+    days.forEach(d => counts[d] = 0);
+    list.forEach(r => {
+      const day = (r.timestamp || "").slice(0, 10);
+      if(counts.hasOwnProperty(day)) counts[day]++;
+    });
+    return days.map(d => counts[d]);
+  }
+  const reportsByDay = countByDay(reports);
+  const currencyByDay = countByDay(currencyReports);
+  const hasTrendData = reportsByDay.some(v=>v>0) || currencyByDay.some(v=>v>0);
+  toggleChartEmpty("chart-trend", !hasTrendData);
+  if(hasTrendData){
+    const ctx3 = document.getElementById("chart-trend").getContext("2d");
+    const dayLabels = days.map(d => d.slice(5)); // MM-DD
+    const data3 = {
+      labels: dayLabels,
+      datasets: [
+        { label: "Fraud reports", data: reportsByDay, borderColor: "#E23D28", backgroundColor: "rgba(226,61,40,0.12)", tension: 0.3, fill: true },
+        { label: "Currency checks", data: currencyByDay, borderColor: "#3B82F6", backgroundColor: "rgba(59,130,246,0.12)", tension: 0.3, fill: true }
+      ]
+    };
+    if(trendChart){
+      trendChart.data = data3;
+      trendChart.update();
+    }else{
+      trendChart = new Chart(ctx3, {
+        type: "line",
+        data: data3,
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: "top" } },
+          scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: "rgba(255,255,255,0.06)" } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+  }
+}
 
 /* ============================================================
    LOGIN / ROLE GATE
