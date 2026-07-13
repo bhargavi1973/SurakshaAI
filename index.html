@@ -351,6 +351,23 @@
     color:var(--text-dim);font-size:12.5px;text-align:center;
   }
   @media (max-width:760px){.analytics-grid{grid-template-columns:1fr;}}
+
+  /* ---------- voice recording widget ---------- */
+  .voice-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .voice-btn{
+    font-size:12.5px;font-weight:600;padding:8px 13px;border-radius:8px;
+    border:1px solid var(--line);background:var(--panel-2);color:var(--text);
+    cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+  }
+  .voice-btn:hover{border-color:var(--brand);}
+  .voice-btn.recording{background:var(--danger-bg);border-color:var(--danger);color:var(--danger);}
+  .voice-upload-label{margin:0;}
+  .record-timer{font-family:var(--font-mono);font-size:12.5px;color:var(--danger);font-weight:600;}
+  .audio-preview-wrap{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
+  .audio-preview-wrap audio{width:100%;height:36px;}
+  .voice-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .transcribe-status{margin-top:8px;font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:8px;}
+  .transcribe-status.error{color:var(--danger);}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
@@ -458,6 +475,24 @@
         <div class="field">
           <label data-i18n="label_desc">Describe exactly what they said / asked for</label>
           <textarea id="in-desc" data-i18n-placeholder="placeholder_desc" placeholder="e.g. Man in police uniform on video call, says my Aadhaar is linked to a drug case..."></textarea>
+        </div>
+
+        <div class="field">
+          <label data-i18n="voice_label">🎙️ Add a voice recording (optional)</label>
+          <div class="voice-controls">
+            <button type="button" class="voice-btn" id="btn-record-toggle" data-i18n="voice_record_btn">● Record</button>
+            <span class="record-timer" id="record-timer" style="display:none;">00:00</span>
+            <label class="voice-btn voice-upload-label" for="audio-file-input" data-i18n="voice_upload_btn">📎 Upload audio</label>
+            <input type="file" id="audio-file-input" accept="audio/*" style="display:none;" />
+          </div>
+          <div class="audio-preview-wrap" id="audio-preview-wrap" style="display:none;">
+            <audio id="audio-preview" controls></audio>
+            <div class="voice-actions">
+              <button type="button" class="export-btn" id="btn-transcribe" data-i18n="voice_transcribe_btn">Transcribe → fill description</button>
+              <button type="button" class="export-btn" id="btn-remove-audio" data-i18n="voice_remove_btn">✕ Remove</button>
+            </div>
+          </div>
+          <div class="transcribe-status" id="transcribe-status" style="display:none;"></div>
         </div>
 
         <div class="row2">
@@ -1301,7 +1336,11 @@ en: {
   ncrb_draft_copy:"Copy text", ncrb_draft_copied:"Copied!", ncrb_draft_download:"Download .txt", ncrb_draft_close:"Close",
   ncrb_draft_disclaimer:"Auto-generated draft to help you file faster. Review, correct, and complete it before submitting on cybercrime.gov.in — Suraksha Grid does not submit anything on your behalf.",
   section_analytics:"Analytics", chart_scam_types:"Reports by Scam Type", chart_denominations:"Currency Checks by Denomination",
-  chart_trend:"Reports Over Time (last 14 days)", chart_no_data:"Not enough data yet"
+  chart_trend:"Reports Over Time (last 14 days)", chart_no_data:"Not enough data yet",
+  voice_label:"🎙️ Add a voice recording (optional)", voice_record_btn:"● Record", voice_stop_btn:"■ Stop",
+  voice_upload_btn:"📎 Upload audio", voice_transcribe_btn:"Transcribe → fill description", voice_remove_btn:"✕ Remove",
+  voice_transcribing:"Transcribing audio...", voice_transcribe_error:"Could not transcribe this audio. You can still type the description manually.",
+  voice_mic_denied:"Microphone access was denied or unavailable. You can upload an audio file instead.", voice_prefix_label:"[Transcribed from audio]"
 },
 hi: {
   login_eyebrow:"आप सुरक्षा ग्रिड तक कैसे पहुँच रहे हैं चुनें",
@@ -1316,7 +1355,11 @@ hi: {
   ncrb_draft_copy:"टेक्स्ट कॉपी करें", ncrb_draft_copied:"कॉपी हो गया!", ncrb_draft_download:"डाउनलोड .txt", ncrb_draft_close:"बंद करें",
   ncrb_draft_disclaimer:"तेज़ी से शिकायत दर्ज करने में मदद के लिए स्वतः-जनित मसौदा। cybercrime.gov.in पर सबमिट करने से पहले समीक्षा करें, सुधारें और पूरा करें — सुरक्षा ग्रिड आपकी ओर से कुछ भी सबमिट नहीं करता।",
   section_analytics:"विश्लेषण", chart_scam_types:"धोखाधड़ी के प्रकार अनुसार रिपोर्टें", chart_denominations:"मूल्यवर्ग अनुसार करेंसी जांच",
-  chart_trend:"समय के साथ रिपोर्टें (पिछले 14 दिन)", chart_no_data:"अभी पर्याप्त डेटा नहीं है"
+  chart_trend:"समय के साथ रिपोर्टें (पिछले 14 दिन)", chart_no_data:"अभी पर्याप्त डेटा नहीं है",
+  voice_label:"🎙️ आवाज़ रिकॉर्डिंग जोड़ें (वैकल्पिक)", voice_record_btn:"● रिकॉर्ड करें", voice_stop_btn:"■ रोकें",
+  voice_upload_btn:"📎 ऑडियो अपलोड करें", voice_transcribe_btn:"ट्रांसक्राइब करें → विवरण भरें", voice_remove_btn:"✕ हटाएं",
+  voice_transcribing:"ऑडियो ट्रांसक्राइब हो रहा है...", voice_transcribe_error:"इस ऑडियो को ट्रांसक्राइब नहीं किया जा सका। आप विवरण खुद टाइप कर सकते हैं।",
+  voice_mic_denied:"माइक्रोफोन एक्सेस अस्वीकृत या अनुपलब्ध था। आप इसके बजाय एक ऑडियो फाइल अपलोड कर सकते हैं।", voice_prefix_label:"[ऑडियो से ट्रांसक्राइब किया गया]"
 },
 ta: {
   login_eyebrow:"சுரக்ஷா கிரிட்டை நீங்கள் எவ்வாறு அணுகுகிறீர்கள் என்பதைத் தேர்ந்தெடுக்கவும்",
@@ -1331,7 +1374,11 @@ ta: {
   ncrb_draft_copy:"உரையை நகலெடுக்கவும்", ncrb_draft_copied:"நகலெடுக்கப்பட்டது!", ncrb_draft_download:".txt பதிவிறக்கவும்", ncrb_draft_close:"மூடு",
   ncrb_draft_disclaimer:"விரைவாக புகார் அளிக்க உதவும் தானாக உருவாக்கப்பட்ட வரைவு. cybercrime.gov.in இல் சமர்ப்பிக்கும் முன் மதிப்பாய்வு செய்து, திருத்தி, முடிக்கவும் — சுரக்ஷா கிரிட் உங்கள் சார்பாக எதையும் சமர்ப்பிக்காது.",
   section_analytics:"பகுப்பாய்வு", chart_scam_types:"மோசடி வகை வாரியான அறிக்கைகள்", chart_denominations:"மதிப்பு வாரியான நாணய சரிபார்ப்புகள்",
-  chart_trend:"காலப்போக்கில் அறிக்கைகள் (கடந்த 14 நாட்கள்)", chart_no_data:"இன்னும் போதுமான தரவு இல்லை"
+  chart_trend:"காலப்போக்கில் அறிக்கைகள் (கடந்த 14 நாட்கள்)", chart_no_data:"இன்னும் போதுமான தரவு இல்லை",
+  voice_label:"🎙️ குரல் பதிவைச் சேர்க்கவும் (விருப்பம்)", voice_record_btn:"● பதிவு செய்யவும்", voice_stop_btn:"■ நிறுத்து",
+  voice_upload_btn:"📎 ஆடியோவைப் பதிவேற்றவும்", voice_transcribe_btn:"படியெடுக்கவும் → விவரத்தை நிரப்பவும்", voice_remove_btn:"✕ அகற்று",
+  voice_transcribing:"ஆடியோ படியெடுக்கப்படுகிறது...", voice_transcribe_error:"இந்த ஆடியோவை படியெடுக்க முடியவில்லை. நீங்கள் இன்னும் விவரத்தை நீங்களே தட்டச்சு செய்யலாம்.",
+  voice_mic_denied:"மைக்ரோஃபோன் அணுகல் மறுக்கப்பட்டது அல்லது கிடைக்கவில்லை. அதற்குப் பதிலாக ஆடியோ கோப்பைப் பதிவேற்றலாம்.", voice_prefix_label:"[ஆடியோவிலிருந்து படியெடுக்கப்பட்டது]"
 },
 te: {
   login_eyebrow:"మీరు సురక్ష గ్రిడ్‌ను ఎలా యాక్సెస్ చేస్తున్నారో ఎంచుకోండి",
@@ -1346,7 +1393,11 @@ te: {
   ncrb_draft_copy:"టెక్స్ట్ కాపీ చేయండి", ncrb_draft_copied:"కాపీ చేయబడింది!", ncrb_draft_download:".txt డౌన్‌లోడ్ చేయండి", ncrb_draft_close:"మూసివేయండి",
   ncrb_draft_disclaimer:"వేగంగా ఫిర్యాదు చేయడంలో సహాయపడటానికి స్వయంచాలకంగా రూపొందించిన ముసాయిదా. cybercrime.gov.in లో సమర్పించే ముందు సమీక్షించి, సరిచేసి, పూర్తి చేయండి — సురక్ష గ్రిడ్ మీ తరపున దేనినీ సమర్పించదు.",
   section_analytics:"విశ్లేషణ", chart_scam_types:"మోసం రకం వారీగా నివేదికలు", chart_denominations:"విలువ వారీగా కరెన్సీ తనిఖీలు",
-  chart_trend:"కాలక్రమేణా నివేదికలు (గత 14 రోజులు)", chart_no_data:"ఇంకా తగినంత డేటా లేదు"
+  chart_trend:"కాలక్రమేణా నివేదికలు (గత 14 రోజులు)", chart_no_data:"ఇంకా తగినంత డేటా లేదు",
+  voice_label:"🎙️ వాయిస్ రికార్డింగ్ జోడించండి (ఐచ్ఛికం)", voice_record_btn:"● రికార్డ్ చేయండి", voice_stop_btn:"■ ఆపు",
+  voice_upload_btn:"📎 ఆడియో అప్‌లోడ్ చేయండి", voice_transcribe_btn:"ట్రాన్స్క్రైబ్ చేయండి → వివరణ నింపండి", voice_remove_btn:"✕ తొలగించు",
+  voice_transcribing:"ఆడియో ట్రాన్స్క్రైబ్ అవుతోంది...", voice_transcribe_error:"ఈ ఆడియోను ట్రాన్స్క్రైబ్ చేయలేకపోయాము. మీరు ఇప్పటికీ వివరణను మీరే టైప్ చేయవచ్చు.",
+  voice_mic_denied:"మైక్రోఫోన్ యాక్సెస్ నిరాకరించబడింది లేదా అందుబాటులో లేదు. బదులుగా మీరు ఆడియో ఫైల్‌ను అప్‌లోడ్ చేయవచ్చు.", voice_prefix_label:"[ఆడియో నుండి ట్రాన్స్క్రైబ్ చేయబడింది]"
 },
 bn: {
   login_eyebrow:"আপনি সুরক্ষা গ্রিড কীভাবে অ্যাক্সেস করছেন তা বেছে নিন",
@@ -1361,7 +1412,11 @@ bn: {
   ncrb_draft_copy:"টেক্সট কপি করুন", ncrb_draft_copied:"কপি হয়েছে!", ncrb_draft_download:".txt ডাউনলোড করুন", ncrb_draft_close:"বন্ধ করুন",
   ncrb_draft_disclaimer:"দ্রুত অভিযোগ দায়ের করতে সাহায্য করার জন্য স্বয়ংক্রিয়ভাবে তৈরি খসড়া। cybercrime.gov.in-এ জমা দেওয়ার আগে পর্যালোচনা করুন, সংশোধন করুন এবং সম্পূর্ণ করুন — সুরক্ষা গ্রিড আপনার পক্ষে কিছু জমা দেয় না।",
   section_analytics:"বিশ্লেষণ", chart_scam_types:"প্রতারণার ধরন অনুযায়ী রিপোর্ট", chart_denominations:"মূল্যমান অনুযায়ী মুদ্রা যাচাই",
-  chart_trend:"সময়ের সাথে রিপোর্ট (গত ১৪ দিন)", chart_no_data:"এখনও পর্যাপ্ত তথ্য নেই"
+  chart_trend:"সময়ের সাথে রিপোর্ট (গত ১৪ দিন)", chart_no_data:"এখনও পর্যাপ্ত তথ্য নেই",
+  voice_label:"🎙️ ভয়েস রেকর্ডিং যোগ করুন (ঐচ্ছিক)", voice_record_btn:"● রেকর্ড করুন", voice_stop_btn:"■ থামুন",
+  voice_upload_btn:"📎 অডিও আপলোড করুন", voice_transcribe_btn:"ট্রান্সক্রাইব করুন → বিবরণ পূরণ করুন", voice_remove_btn:"✕ সরান",
+  voice_transcribing:"অডিও ট্রান্সক্রাইব হচ্ছে...", voice_transcribe_error:"এই অডিওটি ট্রান্সক্রাইব করা যায়নি। আপনি নিজে বিবরণ টাইপ করতে পারেন।",
+  voice_mic_denied:"মাইক্রোফোন অ্যাক্সেস প্রত্যাখ্যাত বা অনুপলব্ধ ছিল। আপনি পরিবর্তে একটি অডিও ফাইল আপলোড করতে পারেন।", voice_prefix_label:"[অডিও থেকে ট্রান্সক্রাইব করা হয়েছে]"
 },
 mr: {
   login_eyebrow:"तुम्ही सुरक्षा ग्रिड कसे अॅक्सेस करत आहात ते निवडा",
@@ -1376,7 +1431,11 @@ mr: {
   ncrb_draft_copy:"मजकूर कॉपी करा", ncrb_draft_copied:"कॉपी झाले!", ncrb_draft_download:".txt डाउनलोड करा", ncrb_draft_close:"बंद करा",
   ncrb_draft_disclaimer:"जलद तक्रार दाखल करण्यास मदत करण्यासाठी स्वयंचलितपणे तयार केलेला मसुदा. cybercrime.gov.in वर सबमिट करण्यापूर्वी पुनरावलोकन करा, दुरुस्त करा आणि पूर्ण करा — सुरक्षा ग्रिड तुमच्या वतीने काहीही सबमिट करत नाही.",
   section_analytics:"विश्लेषण", chart_scam_types:"फसवणुकीच्या प्रकारानुसार तक्रारी", chart_denominations:"मूल्यानुसार चलन तपासणी",
-  chart_trend:"कालांतराने तक्रारी (गेले 14 दिवस)", chart_no_data:"अद्याप पुरेसा डेटा नाही"
+  chart_trend:"कालांतराने तक्रारी (गेले 14 दिवस)", chart_no_data:"अद्याप पुरेसा डेटा नाही",
+  voice_label:"🎙️ आवाज रेकॉर्डिंग जोडा (पर्यायी)", voice_record_btn:"● रेकॉर्ड करा", voice_stop_btn:"■ थांबवा",
+  voice_upload_btn:"📎 ऑडिओ अपलोड करा", voice_transcribe_btn:"ट्रान्सक्राइब करा → वर्णन भरा", voice_remove_btn:"✕ काढा",
+  voice_transcribing:"ऑडिओ ट्रान्सक्राइब होत आहे...", voice_transcribe_error:"हा ऑडिओ ट्रान्सक्राइब करता आला नाही. तुम्ही स्वतः वर्णन टाइप करू शकता.",
+  voice_mic_denied:"मायक्रोफोन प्रवेश नाकारला गेला किंवा उपलब्ध नव्हता. त्याऐवजी तुम्ही ऑडिओ फाइल अपलोड करू शकता.", voice_prefix_label:"[ऑडिओवरून ट्रान्सक्राइब केले]"
 },
 kn: {
   login_eyebrow:"ನೀವು ಸುರಕ್ಷಾ ಗ್ರಿಡ್ ಅನ್ನು ಹೇಗೆ ಪ್ರವೇಶಿಸುತ್ತಿದ್ದೀರಿ ಎಂಬುದನ್ನು ಆಯ್ಕೆಮಾಡಿ",
@@ -1391,7 +1450,11 @@ kn: {
   ncrb_draft_copy:"ಪಠ್ಯವನ್ನು ನಕಲಿಸಿ", ncrb_draft_copied:"ನಕಲಿಸಲಾಗಿದೆ!", ncrb_draft_download:".txt ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ", ncrb_draft_close:"ಮುಚ್ಚಿ",
   ncrb_draft_disclaimer:"ವೇಗವಾಗಿ ದೂರು ಸಲ್ಲಿಸಲು ಸಹಾಯ ಮಾಡಲು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ರಚಿಸಲಾದ ಕರಡು. cybercrime.gov.in ನಲ್ಲಿ ಸಲ್ಲಿಸುವ ಮೊದಲು ಪರಿಶೀಲಿಸಿ, ಸರಿಪಡಿಸಿ ಮತ್ತು ಪೂರ್ಣಗೊಳಿಸಿ — ಸುರಕ್ಷಾ ಗ್ರಿಡ್ ನಿಮ್ಮ ಪರವಾಗಿ ಏನನ್ನೂ ಸಲ್ಲಿಸುವುದಿಲ್ಲ.",
   section_analytics:"ವಿಶ್ಲೇಷಣೆ", chart_scam_types:"ವಂಚನೆ ಪ್ರಕಾರದ ಪ್ರಕಾರ ವರದಿಗಳು", chart_denominations:"ಮುಖಬೆಲೆ ಪ್ರಕಾರ ಕರೆನ್ಸಿ ಪರಿಶೀಲನೆಗಳು",
-  chart_trend:"ಕಾಲಾನಂತರದಲ್ಲಿ ವರದಿಗಳು (ಕಳೆದ 14 ದಿನಗಳು)", chart_no_data:"ಇನ್ನೂ ಸಾಕಷ್ಟು ಡೇಟಾ ಇಲ್ಲ"
+  chart_trend:"ಕಾಲಾನಂತರದಲ್ಲಿ ವರದಿಗಳು (ಕಳೆದ 14 ದಿನಗಳು)", chart_no_data:"ಇನ್ನೂ ಸಾಕಷ್ಟು ಡೇಟಾ ಇಲ್ಲ",
+  voice_label:"🎙️ ಧ್ವನಿ ರೆಕಾರ್ಡಿಂಗ್ ಸೇರಿಸಿ (ಐಚ್ಛಿಕ)", voice_record_btn:"● ರೆಕಾರ್ಡ್ ಮಾಡಿ", voice_stop_btn:"■ ನಿಲ್ಲಿಸಿ",
+  voice_upload_btn:"📎 ಆಡಿಯೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ", voice_transcribe_btn:"ಪ್ರತಿಲೇಖಿಸಿ → ವಿವರಣೆ ತುಂಬಿ", voice_remove_btn:"✕ ತೆಗೆದುಹಾಕಿ",
+  voice_transcribing:"ಆಡಿಯೋ ಪ್ರತಿಲೇಖನ ಆಗುತ್ತಿದೆ...", voice_transcribe_error:"ಈ ಆಡಿಯೋವನ್ನು ಪ್ರತಿಲೇಖಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನೀವು ಇನ್ನೂ ವಿವರಣೆಯನ್ನು ನೀವೇ ಟೈಪ್ ಮಾಡಬಹುದು.",
+  voice_mic_denied:"ಮೈಕ್ರೊಫೋನ್ ಪ್ರವೇಶವನ್ನು ನಿರಾಕರಿಸಲಾಗಿದೆ ಅಥವಾ ಲಭ್ಯವಿಲ್ಲ. ಬದಲಿಗೆ ನೀವು ಆಡಿಯೋ ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಬಹುದು.", voice_prefix_label:"[ಆಡಿಯೋದಿಂದ ಪ್ರತಿಲೇಖಿಸಲಾಗಿದೆ]"
 },
 gu: {
   login_eyebrow:"તમે સુરક્ષા ગ્રિડને કેવી રીતે એક્સેસ કરી રહ્યા છો તે પસંદ કરો",
@@ -1406,7 +1469,11 @@ gu: {
   ncrb_draft_copy:"ટેક્સ્ટ કૉપિ કરો", ncrb_draft_copied:"કૉપિ થયું!", ncrb_draft_download:".txt ડાઉનલોડ કરો", ncrb_draft_close:"બંધ કરો",
   ncrb_draft_disclaimer:"ઝડપથી ફરિયાદ નોંધવામાં મદદ કરવા માટે સ્વયં-જનરેટેડ ડ્રાફ્ટ. cybercrime.gov.in પર સબમિટ કરતા પહેલા સમીક્ષા કરો, સુધારો અને પૂર્ણ કરો — સુરક્ષા ગ્રિડ તમારા વતી કંઈપણ સબમિટ કરતું નથી.",
   section_analytics:"વિશ્લેષણ", chart_scam_types:"છેતરપિંડીના પ્રકાર મુજબ રિપોર્ટ્સ", chart_denominations:"મૂલ્ય મુજબ ચલણ ચકાસણી",
-  chart_trend:"સમય જતાં રિપોર્ટ્સ (છેલ્લા 14 દિવસ)", chart_no_data:"હજુ પૂરતો ડેટા નથી"
+  chart_trend:"સમય જતાં રિપોર્ટ્સ (છેલ્લા 14 દિવસ)", chart_no_data:"હજુ પૂરતો ડેટા નથી",
+  voice_label:"🎙️ વૉઇસ રેકોર્ડિંગ ઉમેરો (વૈકલ્પિક)", voice_record_btn:"● રેકોર્ડ કરો", voice_stop_btn:"■ રોકો",
+  voice_upload_btn:"📎 ઑડિયો અપલોડ કરો", voice_transcribe_btn:"ટ્રાન્સક્રાઇબ કરો → વર્ણન ભરો", voice_remove_btn:"✕ દૂર કરો",
+  voice_transcribing:"ઑડિયો ટ્રાન્સક્રાઇબ થઈ રહ્યું છે...", voice_transcribe_error:"આ ઑડિયો ટ્રાન્સક્રાઇબ કરી શકાયું નથી. તમે વર્ણન જાતે ટાઇપ કરી શકો છો.",
+  voice_mic_denied:"માઇક્રોફોન ઍક્સેસ નકારવામાં આવ્યો અથવા ઉપલબ્ધ ન હતો. તેના બદલે તમે ઑડિયો ફાઇલ અપલોડ કરી શકો છો.", voice_prefix_label:"[ઑડિયોમાંથી ટ્રાન્સક્રાઇબ કરેલ]"
 },
 ml: {
   login_eyebrow:"നിങ്ങൾ സുരക്ഷാ ഗ്രിഡ് എങ്ങനെ ആക്‌സസ് ചെയ്യുന്നു എന്ന് തിരഞ്ഞെടുക്കുക",
@@ -1421,7 +1488,11 @@ ml: {
   ncrb_draft_copy:"ടെക്സ്റ്റ് പകർത്തുക", ncrb_draft_copied:"പകർത്തി!", ncrb_draft_download:".txt ഡൗൺലോഡ് ചെയ്യുക", ncrb_draft_close:"അടയ്ക്കുക",
   ncrb_draft_disclaimer:"വേഗത്തിൽ പരാതി ഫയൽ ചെയ്യാൻ സഹായിക്കുന്നതിന് സ്വയമേവ സൃഷ്ടിച്ച ഡ്രാഫ്റ്റ്. cybercrime.gov.in ൽ സമർപ്പിക്കുന്നതിന് മുമ്പ് അവലോകനം ചെയ്ത്, ശരിയാക്കി, പൂർത്തിയാക്കുക — സുരക്ഷാ ഗ്രിഡ് നിങ്ങൾക്ക് വേണ്ടി ഒന്നും സമർപ്പിക്കുന്നില്ല.",
   section_analytics:"വിശകലനം", chart_scam_types:"തട്ടിപ്പ് തരം അനുസരിച്ചുള്ള റിപ്പോർട്ടുകൾ", chart_denominations:"മൂല്യം അനുസരിച്ചുള്ള കറൻസി പരിശോധനകൾ",
-  chart_trend:"കാലക്രമേണ റിപ്പോർട്ടുകൾ (കഴിഞ്ഞ 14 ദിവസം)", chart_no_data:"ഇതുവരെ മതിയായ ഡാറ്റയില്ല"
+  chart_trend:"കാലക്രമേണ റിപ്പോർട്ടുകൾ (കഴിഞ്ഞ 14 ദിവസം)", chart_no_data:"ഇതുവരെ മതിയായ ഡാറ്റയില്ല",
+  voice_label:"🎙️ ശബ്ദ റെക്കോർഡിംഗ് ചേർക്കുക (ഓപ്ഷണൽ)", voice_record_btn:"● റെക്കോർഡ് ചെയ്യുക", voice_stop_btn:"■ നിർത്തുക",
+  voice_upload_btn:"📎 ഓഡിയോ അപ്‌ലോഡ് ചെയ്യുക", voice_transcribe_btn:"ട്രാൻസ്ക്രൈബ് ചെയ്യുക → വിവരണം പൂരിപ്പിക്കുക", voice_remove_btn:"✕ നീക്കം ചെയ്യുക",
+  voice_transcribing:"ഓഡിയോ ട്രാൻസ്ക്രൈബ് ചെയ്യുന്നു...", voice_transcribe_error:"ഈ ഓഡിയോ ട്രാൻസ്ക്രൈബ് ചെയ്യാൻ കഴിഞ്ഞില്ല. നിങ്ങൾക്ക് ഇപ്പോഴും വിവരണം സ്വയം ടൈപ്പ് ചെയ്യാം.",
+  voice_mic_denied:"മൈക്രോഫോൺ ആക്‌സസ് നിരസിക്കപ്പെട്ടു അല്ലെങ്കിൽ ലഭ്യമല്ല. പകരം നിങ്ങൾക്ക് ഒരു ഓഡിയോ ഫയൽ അപ്‌ലോഡ് ചെയ്യാം.", voice_prefix_label:"[ഓഡിയോയിൽ നിന്ന് ട്രാൻസ്ക്രൈബ് ചെയ്തത്]"
 },
 pa: {
   login_eyebrow:"ਤੁਸੀਂ ਸੁਰਕਸ਼ਾ ਗਰਿੱਡ ਤੱਕ ਕਿਵੇਂ ਪਹੁੰਚ ਰਹੇ ਹੋ ਚੁਣੋ",
@@ -1436,7 +1507,11 @@ pa: {
   ncrb_draft_copy:"ਟੈਕਸਟ ਕਾਪੀ ਕਰੋ", ncrb_draft_copied:"ਕਾਪੀ ਹੋ ਗਿਆ!", ncrb_draft_download:".txt ਡਾਊਨਲੋਡ ਕਰੋ", ncrb_draft_close:"ਬੰਦ ਕਰੋ",
   ncrb_draft_disclaimer:"ਤੇਜ਼ੀ ਨਾਲ ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰਨ ਵਿੱਚ ਮਦਦ ਲਈ ਸਵੈ-ਤਿਆਰ ਡਰਾਫਟ। cybercrime.gov.in 'ਤੇ ਸਬਮਿਟ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਸਮੀਖਿਆ ਕਰੋ, ਠੀਕ ਕਰੋ ਅਤੇ ਪੂਰਾ ਕਰੋ — ਸੁਰਕਸ਼ਾ ਗਰਿੱਡ ਤੁਹਾਡੀ ਤਰਫੋਂ ਕੁਝ ਵੀ ਸਬਮਿਟ ਨਹੀਂ ਕਰਦਾ।",
   section_analytics:"ਵਿਸ਼ਲੇਸ਼ਣ", chart_scam_types:"ਧੋਖਾਧੜੀ ਦੀ ਕਿਸਮ ਅਨੁਸਾਰ ਰਿਪੋਰਟਾਂ", chart_denominations:"ਮੁੱਲ ਅਨੁਸਾਰ ਕਰੰਸੀ ਜਾਂਚਾਂ",
-  chart_trend:"ਸਮੇਂ ਦੇ ਨਾਲ ਰਿਪੋਰਟਾਂ (ਪਿਛਲੇ 14 ਦਿਨ)", chart_no_data:"ਅਜੇ ਤੱਕ ਲੋੜੀਂਦਾ ਡਾਟਾ ਨਹੀਂ"
+  chart_trend:"ਸਮੇਂ ਦੇ ਨਾਲ ਰਿਪੋਰਟਾਂ (ਪਿਛਲੇ 14 ਦਿਨ)", chart_no_data:"ਅਜੇ ਤੱਕ ਲੋੜੀਂਦਾ ਡਾਟਾ ਨਹੀਂ",
+  voice_label:"🎙️ ਆਵਾਜ਼ ਰਿਕਾਰਡਿੰਗ ਸ਼ਾਮਲ ਕਰੋ (ਵਿਕਲਪਿਕ)", voice_record_btn:"● ਰਿਕਾਰਡ ਕਰੋ", voice_stop_btn:"■ ਰੋਕੋ",
+  voice_upload_btn:"📎 ਆਡੀਓ ਅੱਪਲੋਡ ਕਰੋ", voice_transcribe_btn:"ਟ੍ਰਾਂਸਕ੍ਰਾਈਬ ਕਰੋ → ਵੇਰਵਾ ਭਰੋ", voice_remove_btn:"✕ ਹਟਾਓ",
+  voice_transcribing:"ਆਡੀਓ ਟ੍ਰਾਂਸਕ੍ਰਾਈਬ ਹੋ ਰਿਹਾ ਹੈ...", voice_transcribe_error:"ਇਸ ਆਡੀਓ ਨੂੰ ਟ੍ਰਾਂਸਕ੍ਰਾਈਬ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ। ਤੁਸੀਂ ਖੁਦ ਵੇਰਵਾ ਟਾਈਪ ਕਰ ਸਕਦੇ ਹੋ।",
+  voice_mic_denied:"ਮਾਈਕ੍ਰੋਫੋਨ ਪਹੁੰਚ ਤੋਂ ਇਨਕਾਰ ਕੀਤਾ ਗਿਆ ਜਾਂ ਉਪਲਬਧ ਨਹੀਂ ਸੀ। ਤੁਸੀਂ ਇਸਦੀ ਬਜਾਏ ਇੱਕ ਆਡੀਓ ਫਾਈਲ ਅੱਪਲੋਡ ਕਰ ਸਕਦੇ ਹੋ।", voice_prefix_label:"[ਆਡੀਓ ਤੋਂ ਟ੍ਰਾਂਸਕ੍ਰਾਈਬ ਕੀਤਾ ਗਿਆ]"
 },
 or: {
   login_eyebrow:"ଆପଣ ସୁରକ୍ଷା ଗ୍ରିଡ୍ କିପରି ଆକ୍ସେସ୍ କରୁଛନ୍ତି ବାଛନ୍ତୁ",
@@ -1451,7 +1526,11 @@ or: {
   ncrb_draft_copy:"ଟେକ୍ସଟ୍ କପି କରନ୍ତୁ", ncrb_draft_copied:"କପି ହୋଇଗଲା!", ncrb_draft_download:".txt ଡାଉନଲୋଡ୍ କରନ୍ତୁ", ncrb_draft_close:"ବନ୍ଦ କରନ୍ତୁ",
   ncrb_draft_disclaimer:"ଶୀଘ୍ର ଅଭିଯୋଗ ଦାଖଲ କରିବାରେ ସାହାଯ୍ୟ ପାଇଁ ସ୍ୱୟଂ-ସୃଷ୍ଟ ଡ୍ରାଫ୍ଟ। cybercrime.gov.in ରେ ଦାଖଲ କରିବା ପୂର୍ବରୁ ସମୀକ୍ଷା କରନ୍ତୁ, ସଂଶୋଧନ କରନ୍ତୁ ଏବଂ ସମ୍ପୂର୍ଣ୍ଣ କରନ୍ତୁ — ସୁରକ୍ଷା ଗ୍ରିଡ୍ ଆପଣଙ୍କ ପକ୍ଷରୁ କିଛି ଦାଖଲ କରେ ନାହିଁ।",
   section_analytics:"ବିଶ୍ଳେଷଣ", chart_scam_types:"ଠକେଇ ପ୍ରକାର ଅନୁସାରେ ରିପୋର୍ଟ", chart_denominations:"ମୂଲ୍ୟ ଅନୁସାରେ ମୁଦ୍ରା ଯାଞ୍ଚ",
-  chart_trend:"ସମୟ ସହିତ ରିପୋର୍ଟ (ଗତ 14 ଦିନ)", chart_no_data:"ଏପର୍ଯ୍ୟନ୍ତ ପର୍ଯ୍ୟାପ୍ତ ତଥ୍ୟ ନାହିଁ"
+  chart_trend:"ସମୟ ସହିତ ରିପୋର୍ଟ (ଗତ 14 ଦିନ)", chart_no_data:"ଏପର୍ଯ୍ୟନ୍ତ ପର୍ଯ୍ୟାପ୍ତ ତଥ୍ୟ ନାହିଁ",
+  voice_label:"🎙️ ଭଏସ୍ ରେକର୍ଡିଂ ଯୋଡନ୍ତୁ (ବୈକଳ୍ପିକ)", voice_record_btn:"● ରେକର୍ଡ୍ କରନ୍ତୁ", voice_stop_btn:"■ ବନ୍ଦ କରନ୍ତୁ",
+  voice_upload_btn:"📎 ଅଡିଓ ଅପଲୋଡ୍ କରନ୍ତୁ", voice_transcribe_btn:"ଟ୍ରାନ୍ସକ୍ରାଇବ୍ କରନ୍ତୁ → ବର୍ଣ୍ଣନା ପୂରଣ କରନ୍ତୁ", voice_remove_btn:"✕ ହଟାନ୍ତୁ",
+  voice_transcribing:"ଅଡିଓ ଟ୍ରାନ୍ସକ୍ରାଇବ୍ ହେଉଛି...", voice_transcribe_error:"ଏହି ଅଡିଓକୁ ଟ୍ରାନ୍ସକ୍ରାଇବ୍ କରାଯାଇପାରିଲା ନାହିଁ। ଆପଣ ନିଜେ ବର୍ଣ୍ଣନା ଟାଇପ୍ କରିପାରିବେ।",
+  voice_mic_denied:"ମାଇକ୍ରୋଫୋନ୍ ଆକ୍ସେସ୍ ପ୍ରତ୍ୟାଖ୍ୟାନ କରାଯାଇଥିଲା କିମ୍ବା ଉପଲବ୍ଧ ନଥିଲା। ଏହା ପରିବର୍ତ୍ତେ ଆପଣ ଏକ ଅଡିଓ ଫାଇଲ୍ ଅପଲୋଡ୍ କରିପାରିବେ।", voice_prefix_label:"[ଅଡିଓରୁ ଟ୍ରାନ୍ସକ୍ରାଇବ୍ କରାଯାଇଛି]"
 },
 ur: {
   login_eyebrow:"آپ سراکشا گرڈ تک کیسے رسائی حاصل کر رہے ہیں منتخب کریں",
@@ -1466,7 +1545,11 @@ ur: {
   ncrb_draft_copy:"متن کاپی کریں", ncrb_draft_copied:"کاپی ہو گیا!", ncrb_draft_download:".txt ڈاؤن لوڈ کریں", ncrb_draft_close:"بند کریں",
   ncrb_draft_disclaimer:"تیزی سے شکایت درج کرنے میں مدد کے لیے خودکار مسودہ۔ cybercrime.gov.in پر جمع کرانے سے پہلے جائزہ لیں، درست کریں اور مکمل کریں — سراکشا گرڈ آپ کی طرف سے کچھ بھی جمع نہیں کراتا۔",
   section_analytics:"تجزیہ", chart_scam_types:"فراڈ کی قسم کے مطابق رپورٹس", chart_denominations:"مالیت کے مطابق کرنسی چیکس",
-  chart_trend:"وقت کے ساتھ رپورٹس (پچھلے 14 دن)", chart_no_data:"ابھی تک کافی ڈیٹا نہیں ہے"
+  chart_trend:"وقت کے ساتھ رپورٹس (پچھلے 14 دن)", chart_no_data:"ابھی تک کافی ڈیٹا نہیں ہے",
+  voice_label:"🎙️ آواز کی ریکارڈنگ شامل کریں (اختیاری)", voice_record_btn:"● ریکارڈ کریں", voice_stop_btn:"■ روکیں",
+  voice_upload_btn:"📎 آڈیو اپ لوڈ کریں", voice_transcribe_btn:"ٹرانسکرائب کریں → تفصیل بھریں", voice_remove_btn:"✕ ہٹائیں",
+  voice_transcribing:"آڈیو ٹرانسکرائب ہو رہا ہے...", voice_transcribe_error:"اس آڈیو کو ٹرانسکرائب نہیں کیا جا سکا۔ آپ خود تفصیل ٹائپ کر سکتے ہیں۔",
+  voice_mic_denied:"مائیکروفون تک رسائی سے انکار کیا گیا یا دستیاب نہیں تھا۔ اس کے بجائے آپ آڈیو فائل اپ لوڈ کر سکتے ہیں۔", voice_prefix_label:"[آڈیو سے ٹرانسکرائب کیا گیا]"
 }
 };
 
@@ -1527,6 +1610,146 @@ document.querySelectorAll("#claim-chips .chip").forEach(chip=>{
     selectedClaim = chip.dataset.val;
   });
 });
+
+/* ============================================================
+   VOICE RECORDING / UPLOAD + TRANSCRIPTION
+   Supports both live microphone recording (MediaRecorder) and
+   uploading an existing audio file. Either path ends with a blob
+   that gets sent to /api/transcribe (Groq Whisper), and the
+   resulting text is appended into the description textarea for
+   the citizen to review before submitting -- never auto-submitted.
+   ============================================================ */
+
+let mediaRecorder = null;
+let recordedChunks = [];
+let recordingTimerInterval = null;
+let recordingSeconds = 0;
+let currentAudioBlob = null;
+let currentAudioMimeType = null;
+
+const btnRecordToggle = document.getElementById("btn-record-toggle");
+const recordTimerEl = document.getElementById("record-timer");
+const audioFileInput = document.getElementById("audio-file-input");
+const audioPreviewWrap = document.getElementById("audio-preview-wrap");
+const audioPreviewEl = document.getElementById("audio-preview");
+const btnTranscribe = document.getElementById("btn-transcribe");
+const btnRemoveAudio = document.getElementById("btn-remove-audio");
+const transcribeStatusEl = document.getElementById("transcribe-status");
+
+function formatTimer(sec){
+  const m = String(Math.floor(sec / 60)).padStart(2, "0");
+  const s = String(sec % 60).padStart(2, "0");
+  return `${m}:${s}`;
+}
+
+function setAudioBlob(blob, mimeType){
+  currentAudioBlob = blob;
+  currentAudioMimeType = mimeType;
+  audioPreviewEl.src = URL.createObjectURL(blob);
+  audioPreviewWrap.style.display = "flex";
+  transcribeStatusEl.style.display = "none";
+}
+
+btnRecordToggle.addEventListener("click", async ()=>{
+  const dict = getDict(currentLang);
+  if(mediaRecorder && mediaRecorder.state === "recording"){
+    mediaRecorder.stop();
+    return;
+  }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recordedChunks = [];
+    const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "";
+    mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+
+    mediaRecorder.ondataavailable = (e) => { if(e.data.size > 0) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || "audio/webm" });
+      setAudioBlob(blob, mediaRecorder.mimeType || "audio/webm");
+      stream.getTracks().forEach(t => t.stop());
+      clearInterval(recordingTimerInterval);
+      recordTimerEl.style.display = "none";
+      btnRecordToggle.classList.remove("recording");
+      btnRecordToggle.textContent = dict.voice_record_btn;
+    };
+
+    mediaRecorder.start();
+    recordingSeconds = 0;
+    recordTimerEl.textContent = "00:00";
+    recordTimerEl.style.display = "inline";
+    recordingTimerInterval = setInterval(()=>{
+      recordingSeconds++;
+      recordTimerEl.textContent = formatTimer(recordingSeconds);
+    }, 1000);
+    btnRecordToggle.classList.add("recording");
+    btnRecordToggle.textContent = dict.voice_stop_btn;
+  }catch(e){
+    alert(dict.voice_mic_denied);
+    console.error(e);
+  }
+});
+
+audioFileInput.addEventListener("change", (e)=>{
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  setAudioBlob(file, file.type || "audio/mpeg");
+});
+
+btnRemoveAudio.addEventListener("click", ()=>{
+  currentAudioBlob = null;
+  currentAudioMimeType = null;
+  audioPreviewEl.src = "";
+  audioPreviewWrap.style.display = "none";
+  audioFileInput.value = "";
+  transcribeStatusEl.style.display = "none";
+});
+
+btnTranscribe.addEventListener("click", async ()=>{
+  const dict = getDict(currentLang);
+  if(!currentAudioBlob) return;
+
+  btnTranscribe.disabled = true;
+  transcribeStatusEl.className = "transcribe-status";
+  transcribeStatusEl.style.display = "flex";
+  transcribeStatusEl.innerHTML = `<div class="spinner" style="width:14px;height:14px;"></div> ${escapeHtml(dict.voice_transcribing)}`;
+
+  try{
+    const base64 = await blobToBase64(currentAudioBlob);
+    const response = await fetch("/api/transcribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ audioBase64: base64, mimeType: currentAudioMimeType })
+    });
+    const data = await response.json();
+    if(!response.ok || data.error) throw new Error(data.error || "Transcription failed");
+
+    const textarea = document.getElementById("in-desc");
+    const prefix = `${dict.voice_prefix_label}: `;
+    textarea.value = textarea.value.trim()
+      ? textarea.value.trim() + "\n\n" + prefix + data.text
+      : prefix + data.text;
+    transcribeStatusEl.style.display = "none";
+  }catch(e){
+    transcribeStatusEl.className = "transcribe-status error";
+    transcribeStatusEl.textContent = dict.voice_transcribe_error;
+    console.error(e);
+  }finally{
+    btnTranscribe.disabled = false;
+  }
+});
+
+function blobToBase64(blob){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      const base64 = result.split(",")[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
 
 /* Map language code -> full English language name for LLM instruction,
    since the model reasons better with explicit language names. */

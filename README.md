@@ -176,6 +176,8 @@ Default priority if unset: Gemini > Groq > Azure.
 
 | Symptom | Likely cause |
 |---|---|
+| "Voice transcription requires GROQ_API_KEY" even though another provider works fine | Voice transcription always uses Groq's free Whisper API specifically, regardless of which provider `/api/llm` is using for text/image classification. Add `GROQ_API_KEY` even if you're primarily using Gemini or Azure for the rest. |
+| Record button does nothing / permission prompt never appears | Browser blocked microphone access, or the site isn't on HTTPS (required for mic access) — Vercel/Netlify URLs are HTTPS by default, so this is rare on a real deployment |
 | "Incorrect access code" even though you're sure it's right | `OFFICIAL_ACCESS_CODE` missing/mistyped on the host, or you forgot to redeploy after adding it |
 | Official login says server error (500) | `OFFICIAL_ACCESS_CODE` not set at all on the host |
 | Verdict never loads, console shows 500 from `/api/llm` | Wrong/missing provider env vars, or forgot to redeploy after adding them |
