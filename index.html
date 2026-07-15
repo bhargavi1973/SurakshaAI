@@ -27,6 +27,61 @@
     --font-mono:'JetBrains Mono', 'Courier New', monospace;
     --font-script: 'Noto Sans', 'Inter', system-ui, sans-serif;
   }
+
+  /* ---------- light theme override ---------- */
+  body.light-theme{
+    --ink:#F4F6F9;
+    --panel:#FFFFFF;
+    --panel-2:#EEF1F5;
+    --line:#D7DDE6;
+    --text:#1A2233;
+    --text-dim:#5B6472;
+    --danger:#C0311A;
+    --danger-bg:rgba(192,49,26,0.08);
+    --caution:#B4790A;
+    --caution-bg:rgba(180,121,10,0.10);
+    --safe:#157347;
+    --safe-bg:rgba(21,115,71,0.08);
+    --brand:#1D4ED8;
+    --brand-bg:rgba(29,78,216,0.08);
+  }
+  body.light-theme .brand-mark{color:white;}
+  body.light-theme .verdict-badge.high,
+  body.light-theme .verdict-badge.medium,
+  body.light-theme .verdict-badge.low{font-weight:700;}
+
+  /* ---------- tricolor strip + official-style header cue ---------- */
+  .tricolor-strip{
+    height:4px;width:100%;
+    background:linear-gradient(90deg,
+      #FF9933 0%, #FF9933 33.33%,
+      #FFFFFF 33.33%, #FFFFFF 66.66%,
+      #138808 66.66%, #138808 100%);
+  }
+  .official-strip{
+    background:var(--panel-2);border-bottom:1px solid var(--line);
+    padding:5px 20px;text-align:center;font-size:10.5px;color:var(--text-dim);
+    font-family:var(--font-mono);letter-spacing:0.02em;
+  }
+
+  /* ---------- theme toggle button ---------- */
+  .theme-toggle-btn{
+    font-size:16px;padding:7px 10px;border-radius:8px;
+    border:1px solid var(--line);background:var(--panel-2);cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;line-height:1;
+  }
+  .theme-toggle-btn:hover{border-color:var(--brand);}
+
+  /* ---------- government-style footer ---------- */
+  .gov-footer{
+    border-top:1px solid var(--line);background:var(--panel-2);
+    margin-top:36px;padding:16px 20px;
+  }
+  .gov-footer-inner{
+    max-width:1180px;margin:0 auto;text-align:center;
+    font-size:11.5px;color:var(--text-dim);line-height:1.7;
+  }
+  .gov-footer-inner strong{color:var(--text);}
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
@@ -264,6 +319,7 @@
   .login-shell{
     min-height:100vh;display:flex;align-items:center;justify-content:center;
     padding:24px;background:radial-gradient(circle at 30% 20%, rgba(59,130,246,0.08), transparent 60%), var(--ink);
+    position:relative;
   }
   .login-card{max-width:640px;width:100%;}
   .login-brand{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:8px;}
@@ -394,8 +450,12 @@
 </head>
 <body>
 
+<div class="tricolor-strip"></div>
+<div class="official-strip" data-i18n="official_strip_text">HACKATHON PROTOTYPE — NOT AN OFFICIAL GOVERNMENT OF INDIA PLATFORM</div>
+
 <!-- ============ LOGIN / ROLE SELECT SCREEN ============ -->
 <div class="login-shell" id="login-shell">
+  <button class="theme-toggle-btn" id="theme-toggle-btn-login" title="Toggle light/dark mode" style="position:absolute;top:16px;right:16px;">☀️</button>
   <div class="login-card">
     <div class="login-brand">
       <div class="brand-mark">SG</div>
@@ -438,6 +498,7 @@
       </div>
     </div>
     <div class="topbar-right">
+      <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle light/dark mode">☀️</button>
       <div class="lang-select-wrap">
         <label data-i18n="lang_label">Language</label>
         <select id="global-lang">
@@ -685,6 +746,13 @@
       <div id="currency-body"></div>
     </div>
 
+  </div>
+
+  <div class="gov-footer">
+    <div class="gov-footer-inner">
+      <strong data-i18n="footer_title">Suraksha Grid — Digital Public Safety Intelligence</strong><br>
+      <span data-i18n="footer_disclaimer">Hackathon prototype — not an official Government of India platform. In an emergency, contact 1930 (National Cybercrime Helpline) or your nearest police station.</span>
+    </div>
   </div>
 
 </div>
@@ -1380,7 +1448,10 @@ en: {
   voice_transcribing:"Transcribing audio...", voice_transcribe_error:"Could not transcribe this audio. You can still type the description manually.",
   voice_mic_denied:"Microphone access was denied or unavailable. You can upload an audio file instead.", voice_prefix_label:"[Transcribed from audio]",
   section_geospatial:"Geospatial Intelligence", label_location_report:"Where did this happen? (city / area — optional)",
-  geo_hotspots_title:"Top Locations (last 14 days)", geo_no_data:"No location data yet"
+  geo_hotspots_title:"Top Locations (last 14 days)", geo_no_data:"No location data yet",
+  official_strip_text:"HACKATHON PROTOTYPE — NOT AN OFFICIAL GOVERNMENT OF INDIA PLATFORM",
+  footer_title:"Suraksha Grid — Digital Public Safety Intelligence",
+  footer_disclaimer:"Hackathon prototype — not an official Government of India platform. In an emergency, contact 1930 (National Cybercrime Helpline) or your nearest police station."
 },
 hi: {
   login_eyebrow:"आप सुरक्षा ग्रिड तक कैसे पहुँच रहे हैं चुनें",
@@ -1401,7 +1472,10 @@ hi: {
   voice_transcribing:"ऑडियो ट्रांसक्राइब हो रहा है...", voice_transcribe_error:"इस ऑडियो को ट्रांसक्राइब नहीं किया जा सका। आप विवरण खुद टाइप कर सकते हैं।",
   voice_mic_denied:"माइक्रोफोन एक्सेस अस्वीकृत या अनुपलब्ध था। आप इसके बजाय एक ऑडियो फाइल अपलोड कर सकते हैं।", voice_prefix_label:"[ऑडियो से ट्रांसक्राइब किया गया]",
   section_geospatial:"भौगोलिक विश्लेषण", label_location_report:"यह कहाँ हुआ? (शहर / क्षेत्र — वैकल्पिक)",
-  geo_hotspots_title:"शीर्ष स्थान (पिछले 14 दिन)", geo_no_data:"अभी तक कोई स्थान डेटा नहीं है"
+  geo_hotspots_title:"शीर्ष स्थान (पिछले 14 दिन)", geo_no_data:"अभी तक कोई स्थान डेटा नहीं है",
+  official_strip_text:"हैकाथॉन प्रोटोटाइप — भारत सरकार का आधिकारिक मंच नहीं है",
+  footer_title:"सुरक्षा ग्रिड — डिजिटल सार्वजनिक सुरक्षा इंटेलिजेंस",
+  footer_disclaimer:"हैकाथॉन प्रोटोटाइप — भारत सरकार का आधिकारिक मंच नहीं है। आपातकाल में, 1930 (राष्ट्रीय साइबर क्राइम हेल्पलाइन) या अपने नजदीकी पुलिस स्टेशन से संपर्क करें।"
 },
 ta: {
   login_eyebrow:"சுரக்ஷா கிரிட்டை நீங்கள் எவ்வாறு அணுகுகிறீர்கள் என்பதைத் தேர்ந்தெடுக்கவும்",
@@ -1422,7 +1496,10 @@ ta: {
   voice_transcribing:"ஆடியோ படியெடுக்கப்படுகிறது...", voice_transcribe_error:"இந்த ஆடியோவை படியெடுக்க முடியவில்லை. நீங்கள் இன்னும் விவரத்தை நீங்களே தட்டச்சு செய்யலாம்.",
   voice_mic_denied:"மைக்ரோஃபோன் அணுகல் மறுக்கப்பட்டது அல்லது கிடைக்கவில்லை. அதற்குப் பதிலாக ஆடியோ கோப்பைப் பதிவேற்றலாம்.", voice_prefix_label:"[ஆடியோவிலிருந்து படியெடுக்கப்பட்டது]",
   section_geospatial:"புவிசார் நுண்ணறிவு", label_location_report:"இது எங்கு நடந்தது? (நகரம் / பகுதி — விருப்பம்)",
-  geo_hotspots_title:"முதன்மை இடங்கள் (கடந்த 14 நாட்கள்)", geo_no_data:"இன்னும் இட தரவு இல்லை"
+  geo_hotspots_title:"முதன்மை இடங்கள் (கடந்த 14 நாட்கள்)", geo_no_data:"இன்னும் இட தரவு இல்லை",
+  official_strip_text:"ஹேக்கத்தான் முன்மாதிரி — இது இந்திய அரசின் அதிகாரப்பூர்வ தளம் அல்ல",
+  footer_title:"சுரக்ஷா கிரிட் — டிஜிட்டல் பொது பாதுகாப்பு நுண்ணறிவு",
+  footer_disclaimer:"ஹேக்கத்தான் முன்மாதிரி — இது இந்திய அரசின் அதிகாரப்பூர்வ தளம் அல்ல. அவசரநிலையில், 1930 (தேசிய சைபர் கிரைம் ஹெல்ப்லைன்) அல்லது உங்கள் அருகிலுள்ள காவல் நிலையத்தை தொடர்பு கொள்ளவும்."
 },
 te: {
   login_eyebrow:"మీరు సురక్ష గ్రిడ్‌ను ఎలా యాక్సెస్ చేస్తున్నారో ఎంచుకోండి",
@@ -1443,7 +1520,10 @@ te: {
   voice_transcribing:"ఆడియో ట్రాన్స్క్రైబ్ అవుతోంది...", voice_transcribe_error:"ఈ ఆడియోను ట్రాన్స్క్రైబ్ చేయలేకపోయాము. మీరు ఇప్పటికీ వివరణను మీరే టైప్ చేయవచ్చు.",
   voice_mic_denied:"మైక్రోఫోన్ యాక్సెస్ నిరాకరించబడింది లేదా అందుబాటులో లేదు. బదులుగా మీరు ఆడియో ఫైల్‌ను అప్‌లోడ్ చేయవచ్చు.", voice_prefix_label:"[ఆడియో నుండి ట్రాన్స్క్రైబ్ చేయబడింది]",
   section_geospatial:"భౌగోళిక విశ్లేషణ", label_location_report:"ఇది ఎక్కడ జరిగింది? (నగరం / ప్రాంతం — ఐచ్ఛికం)",
-  geo_hotspots_title:"అగ్రస్థాన ప్రదేశాలు (గత 14 రోజులు)", geo_no_data:"ఇంకా స్థాన డేటా లేదు"
+  geo_hotspots_title:"అగ్రస్థాన ప్రదేశాలు (గత 14 రోజులు)", geo_no_data:"ఇంకా స్థాన డేటా లేదు",
+  official_strip_text:"హ్యాకథాన్ ప్రోటోటైప్ — ఇది భారత ప్రభుత్వ అధికారిక వేదిక కాదు",
+  footer_title:"సురక్ష గ్రిడ్ — డిజిటల్ పబ్లిక్ సేఫ్టీ ఇంటెలిజెన్స్",
+  footer_disclaimer:"హ్యాకథాన్ ప్రోటోటైప్ — ఇది భారత ప్రభుత్వ అధికారిక వేదిక కాదు. అత్యవసర పరిస్థితిలో, 1930 (జాతీయ సైబర్ క్రైమ్ హెల్ప్‌లైన్) లేదా మీ సమీప పోలీస్ స్టేషన్‌ను సంప్రదించండి."
 },
 bn: {
   login_eyebrow:"আপনি সুরক্ষা গ্রিড কীভাবে অ্যাক্সেস করছেন তা বেছে নিন",
@@ -1464,7 +1544,10 @@ bn: {
   voice_transcribing:"অডিও ট্রান্সক্রাইব হচ্ছে...", voice_transcribe_error:"এই অডিওটি ট্রান্সক্রাইব করা যায়নি। আপনি নিজে বিবরণ টাইপ করতে পারেন।",
   voice_mic_denied:"মাইক্রোফোন অ্যাক্সেস প্রত্যাখ্যাত বা অনুপলব্ধ ছিল। আপনি পরিবর্তে একটি অডিও ফাইল আপলোড করতে পারেন।", voice_prefix_label:"[অডিও থেকে ট্রান্সক্রাইব করা হয়েছে]",
   section_geospatial:"ভৌগোলিক বিশ্লেষণ", label_location_report:"এটি কোথায় ঘটেছে? (শহর / এলাকা — ঐচ্ছিক)",
-  geo_hotspots_title:"শীর্ষ স্থান (গত ১৪ দিন)", geo_no_data:"এখনও কোনো অবস্থানের তথ্য নেই"
+  geo_hotspots_title:"শীর্ষ স্থান (গত ১৪ দিন)", geo_no_data:"এখনও কোনো অবস্থানের তথ্য নেই",
+  official_strip_text:"হ্যাকাথন প্রোটোটাইপ — এটি ভারত সরকারের সরকারি প্ল্যাটফর্ম নয়",
+  footer_title:"সুরক্ষা গ্রিড — ডিজিটাল পাবলিক সেফটি ইন্টেলিজেন্স",
+  footer_disclaimer:"হ্যাকাথন প্রোটোটাইপ — এটি ভারত সরকারের সরকারি প্ল্যাটফর্ম নয়। জরুরী অবস্থায়, 1930 (জাতীয় সাইবার ক্রাইম হেল্পলাইন) বা আপনার নিকটতম থানায় যোগাযোগ করুন।"
 },
 mr: {
   login_eyebrow:"तुम्ही सुरक्षा ग्रिड कसे अॅक्सेस करत आहात ते निवडा",
@@ -1485,7 +1568,10 @@ mr: {
   voice_transcribing:"ऑडिओ ट्रान्सक्राइब होत आहे...", voice_transcribe_error:"हा ऑडिओ ट्रान्सक्राइब करता आला नाही. तुम्ही स्वतः वर्णन टाइप करू शकता.",
   voice_mic_denied:"मायक्रोफोन प्रवेश नाकारला गेला किंवा उपलब्ध नव्हता. त्याऐवजी तुम्ही ऑडिओ फाइल अपलोड करू शकता.", voice_prefix_label:"[ऑडिओवरून ट्रान्सक्राइब केले]",
   section_geospatial:"भौगोलिक विश्लेषण", label_location_report:"हे कुठे घडले? (शहर / भाग — पर्यायी)",
-  geo_hotspots_title:"शीर्ष ठिकाणे (गेले 14 दिवस)", geo_no_data:"अद्याप स्थान डेटा नाही"
+  geo_hotspots_title:"शीर्ष ठिकाणे (गेले 14 दिवस)", geo_no_data:"अद्याप स्थान डेटा नाही",
+  official_strip_text:"हॅकाथॉन प्रोटोटाइप — हे भारत सरकारचे अधिकृत व्यासपीठ नाही",
+  footer_title:"सुरक्षा ग्रिड — डिजिटल सार्वजनिक सुरक्षा इंटेलिजन्स",
+  footer_disclaimer:"हॅकाथॉन प्रोटोटाइप — हे भारत सरकारचे अधिकृत व्यासपीठ नाही. आणीबाणीच्या परिस्थितीत, 1930 (राष्ट्रीय सायबर क्राइम हेल्पलाइन) किंवा तुमच्या जवळच्या पोलीस स्टेशनशी संपर्क साधा."
 },
 kn: {
   login_eyebrow:"ನೀವು ಸುರಕ್ಷಾ ಗ್ರಿಡ್ ಅನ್ನು ಹೇಗೆ ಪ್ರವೇಶಿಸುತ್ತಿದ್ದೀರಿ ಎಂಬುದನ್ನು ಆಯ್ಕೆಮಾಡಿ",
@@ -1506,7 +1592,10 @@ kn: {
   voice_transcribing:"ಆಡಿಯೋ ಪ್ರತಿಲೇಖನ ಆಗುತ್ತಿದೆ...", voice_transcribe_error:"ಈ ಆಡಿಯೋವನ್ನು ಪ್ರತಿಲೇಖಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನೀವು ಇನ್ನೂ ವಿವರಣೆಯನ್ನು ನೀವೇ ಟೈಪ್ ಮಾಡಬಹುದು.",
   voice_mic_denied:"ಮೈಕ್ರೊಫೋನ್ ಪ್ರವೇಶವನ್ನು ನಿರಾಕರಿಸಲಾಗಿದೆ ಅಥವಾ ಲಭ್ಯವಿಲ್ಲ. ಬದಲಿಗೆ ನೀವು ಆಡಿಯೋ ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಬಹುದು.", voice_prefix_label:"[ಆಡಿಯೋದಿಂದ ಪ್ರತಿಲೇಖಿಸಲಾಗಿದೆ]",
   section_geospatial:"ಭೌಗೋಳಿಕ ಗುಪ್ತಚರ", label_location_report:"ಇದು ಎಲ್ಲಿ ನಡೆಯಿತು? (ನಗರ / ಪ್ರದೇಶ — ಐಚ್ಛಿಕ)",
-  geo_hotspots_title:"ಅಗ್ರ ಸ್ಥಳಗಳು (ಕಳೆದ 14 ದಿನಗಳು)", geo_no_data:"ಇನ್ನೂ ಸ್ಥಳ ಡೇಟಾ ಇಲ್ಲ"
+  geo_hotspots_title:"ಅಗ್ರ ಸ್ಥಳಗಳು (ಕಳೆದ 14 ದಿನಗಳು)", geo_no_data:"ಇನ್ನೂ ಸ್ಥಳ ಡೇಟಾ ಇಲ್ಲ",
+  official_strip_text:"ಹ್ಯಾಕಥಾನ್ ಪ್ರೋಟೋಟೈಪ್ — ಇದು ಭಾರತ ಸರ್ಕಾರದ ಅಧಿಕೃತ ವೇದಿಕೆಯಲ್ಲ",
+  footer_title:"ಸುರಕ್ಷಾ ಗ್ರಿಡ್ — ಡಿಜಿಟಲ್ ಪಬ್ಲಿಕ್ ಸೇಫ್ಟಿ ಇಂಟೆಲಿಜೆನ್ಸ್",
+  footer_disclaimer:"ಹ್ಯಾಕಥಾನ್ ಪ್ರೋಟೋಟೈಪ್ — ಇದು ಭಾರತ ಸರ್ಕಾರದ ಅಧಿಕೃತ ವೇದಿಕೆಯಲ್ಲ. ತುರ್ತು ಪರಿಸ್ಥಿತಿಯಲ್ಲಿ, 1930 (ರಾಷ್ಟ್ರೀಯ ಸೈಬರ್ ಕ್ರೈಮ್ ಹೆಲ್ಪ್‌ಲೈನ್) ಅಥವಾ ನಿಮ್ಮ ಹತ್ತಿರದ ಪೊಲೀಸ್ ಠಾಣೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ."
 },
 gu: {
   login_eyebrow:"તમે સુરક્ષા ગ્રિડને કેવી રીતે એક્સેસ કરી રહ્યા છો તે પસંદ કરો",
@@ -1527,7 +1616,10 @@ gu: {
   voice_transcribing:"ઑડિયો ટ્રાન્સક્રાઇબ થઈ રહ્યું છે...", voice_transcribe_error:"આ ઑડિયો ટ્રાન્સક્રાઇબ કરી શકાયું નથી. તમે વર્ણન જાતે ટાઇપ કરી શકો છો.",
   voice_mic_denied:"માઇક્રોફોન ઍક્સેસ નકારવામાં આવ્યો અથવા ઉપલબ્ધ ન હતો. તેના બદલે તમે ઑડિયો ફાઇલ અપલોડ કરી શકો છો.", voice_prefix_label:"[ઑડિયોમાંથી ટ્રાન્સક્રાઇબ કરેલ]",
   section_geospatial:"ભૌગોલિક બુદ્ધિ", label_location_report:"આ ક્યાં થયું? (શહેર / વિસ્તાર — વૈકલ્પિક)",
-  geo_hotspots_title:"ટોચના સ્થાનો (છેલ્લા 14 દિવસ)", geo_no_data:"હજુ સુધી કોઈ સ્થાન ડેટા નથી"
+  geo_hotspots_title:"ટોચના સ્થાનો (છેલ્લા 14 દિવસ)", geo_no_data:"હજુ સુધી કોઈ સ્થાન ડેટા નથી",
+  official_strip_text:"હેકાથોન પ્રોટોટાઇપ — આ ભારત સરકારનું સત્તાવાર પ્લેટફોર્મ નથી",
+  footer_title:"સુરક્ષા ગ્રિડ — ડિજિટલ પબ્લિક સેફ્ટી ઇન્ટેલિજન્સ",
+  footer_disclaimer:"હેકાથોન પ્રોટોટાઇપ — આ ભારત સરકારનું સત્તાવાર પ્લેટફોર્મ નથી. કટોકટીમાં, 1930 (નેશનલ સાયબર ક્રાઇમ હેલ્પલાઇન) અથવા તમારા નજીકના પોલીસ સ્ટેશનનો સંપર્ક કરો."
 },
 ml: {
   login_eyebrow:"നിങ്ങൾ സുരക്ഷാ ഗ്രിഡ് എങ്ങനെ ആക്‌സസ് ചെയ്യുന്നു എന്ന് തിരഞ്ഞെടുക്കുക",
@@ -1548,7 +1640,10 @@ ml: {
   voice_transcribing:"ഓഡിയോ ട്രാൻസ്ക്രൈബ് ചെയ്യുന്നു...", voice_transcribe_error:"ഈ ഓഡിയോ ട്രാൻസ്ക്രൈബ് ചെയ്യാൻ കഴിഞ്ഞില്ല. നിങ്ങൾക്ക് ഇപ്പോഴും വിവരണം സ്വയം ടൈപ്പ് ചെയ്യാം.",
   voice_mic_denied:"മൈക്രോഫോൺ ആക്‌സസ് നിരസിക്കപ്പെട്ടു അല്ലെങ്കിൽ ലഭ്യമല്ല. പകരം നിങ്ങൾക്ക് ഒരു ഓഡിയോ ഫയൽ അപ്‌ലോഡ് ചെയ്യാം.", voice_prefix_label:"[ഓഡിയോയിൽ നിന്ന് ട്രാൻസ്ക്രൈബ് ചെയ്തത്]",
   section_geospatial:"ഭൂമിശാസ്ത്രപരമായ ഇന്റലിജൻസ്", label_location_report:"ഇത് എവിടെയാണ് സംഭവിച്ചത്? (നഗരം / പ്രദേശം — ഓപ്ഷണൽ)",
-  geo_hotspots_title:"മുൻനിര സ്ഥലങ്ങൾ (കഴിഞ്ഞ 14 ദിവസം)", geo_no_data:"ഇതുവരെ സ്ഥല ഡാറ്റയില്ല"
+  geo_hotspots_title:"മുൻനിര സ്ഥലങ്ങൾ (കഴിഞ്ഞ 14 ദിവസം)", geo_no_data:"ഇതുവരെ സ്ഥല ഡാറ്റയില്ല",
+  official_strip_text:"ഹാക്കത്തോൺ പ്രോട്ടോടൈപ്പ് — ഇത് ഇന്ത്യാ ഗവൺമെന്റിന്റെ ഔദ്യോഗിക പ്ലാറ്റ്‌ഫോമല്ല",
+  footer_title:"സുരക്ഷാ ഗ്രിഡ് — ഡിജിറ്റൽ പബ്ലിക് സേഫ്റ്റി ഇന്റലിജൻസ്",
+  footer_disclaimer:"ഹാക്കത്തോൺ പ്രോട്ടോടൈപ്പ് — ഇത് ഇന്ത്യാ ഗവൺമെന്റിന്റെ ഔദ്യോഗിക പ്ലാറ്റ്‌ഫോമല്ല. അടിയന്തര സാഹചര്യത്തിൽ, 1930 (ദേശീയ സൈബർ ക്രൈം ഹെൽപ്‌ലൈൻ) അല്ലെങ്കിൽ നിങ്ങളുടെ അടുത്തുള്ള പോലീസ് സ്റ്റേഷനെ ബന്ധപ്പെടുക."
 },
 pa: {
   login_eyebrow:"ਤੁਸੀਂ ਸੁਰਕਸ਼ਾ ਗਰਿੱਡ ਤੱਕ ਕਿਵੇਂ ਪਹੁੰਚ ਰਹੇ ਹੋ ਚੁਣੋ",
@@ -1569,7 +1664,10 @@ pa: {
   voice_transcribing:"ਆਡੀਓ ਟ੍ਰਾਂਸਕ੍ਰਾਈਬ ਹੋ ਰਿਹਾ ਹੈ...", voice_transcribe_error:"ਇਸ ਆਡੀਓ ਨੂੰ ਟ੍ਰਾਂਸਕ੍ਰਾਈਬ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ। ਤੁਸੀਂ ਖੁਦ ਵੇਰਵਾ ਟਾਈਪ ਕਰ ਸਕਦੇ ਹੋ।",
   voice_mic_denied:"ਮਾਈਕ੍ਰੋਫੋਨ ਪਹੁੰਚ ਤੋਂ ਇਨਕਾਰ ਕੀਤਾ ਗਿਆ ਜਾਂ ਉਪਲਬਧ ਨਹੀਂ ਸੀ। ਤੁਸੀਂ ਇਸਦੀ ਬਜਾਏ ਇੱਕ ਆਡੀਓ ਫਾਈਲ ਅੱਪਲੋਡ ਕਰ ਸਕਦੇ ਹੋ।", voice_prefix_label:"[ਆਡੀਓ ਤੋਂ ਟ੍ਰਾਂਸਕ੍ਰਾਈਬ ਕੀਤਾ ਗਿਆ]",
   section_geospatial:"ਭੂਗੋਲਿਕ ਖੁਫੀਆ ਜਾਣਕਾਰੀ", label_location_report:"ਇਹ ਕਿੱਥੇ ਹੋਇਆ? (ਸ਼ਹਿਰ / ਖੇਤਰ — ਵਿਕਲਪਿਕ)",
-  geo_hotspots_title:"ਪ੍ਰਮੁੱਖ ਸਥਾਨ (ਪਿਛਲੇ 14 ਦਿਨ)", geo_no_data:"ਅਜੇ ਤੱਕ ਕੋਈ ਸਥਾਨ ਡਾਟਾ ਨਹੀਂ"
+  geo_hotspots_title:"ਪ੍ਰਮੁੱਖ ਸਥਾਨ (ਪਿਛਲੇ 14 ਦਿਨ)", geo_no_data:"ਅਜੇ ਤੱਕ ਕੋਈ ਸਥਾਨ ਡਾਟਾ ਨਹੀਂ",
+  official_strip_text:"ਹੈਕਾਥੌਨ ਪ੍ਰੋਟੋਟਾਈਪ — ਇਹ ਭਾਰਤ ਸਰਕਾਰ ਦਾ ਅਧਿਕਾਰਤ ਪਲੇਟਫਾਰਮ ਨਹੀਂ ਹੈ",
+  footer_title:"ਸੁਰਕਸ਼ਾ ਗਰਿੱਡ — ਡਿਜੀਟਲ ਪਬਲਿਕ ਸੇਫਟੀ ਇੰਟੈਲੀਜੈਂਸ",
+  footer_disclaimer:"ਹੈਕਾਥੌਨ ਪ੍ਰੋਟੋਟਾਈਪ — ਇਹ ਭਾਰਤ ਸਰਕਾਰ ਦਾ ਅਧਿਕਾਰਤ ਪਲੇਟਫਾਰਮ ਨਹੀਂ ਹੈ। ਐਮਰਜੈਂਸੀ ਵਿੱਚ, 1930 (ਨੈਸ਼ਨਲ ਸਾਈਬਰ ਕ੍ਰਾਈਮ ਹੈਲਪਲਾਈਨ) ਜਾਂ ਆਪਣੇ ਨਜ਼ਦੀਕੀ ਪੁਲਿਸ ਸਟੇਸ਼ਨ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।"
 },
 or: {
   login_eyebrow:"ଆପଣ ସୁରକ୍ଷା ଗ୍ରିଡ୍ କିପରି ଆକ୍ସେସ୍ କରୁଛନ୍ତି ବାଛନ୍ତୁ",
@@ -1590,7 +1688,10 @@ or: {
   voice_transcribing:"ଅଡିଓ ଟ୍ରାନ୍ସକ୍ରାଇବ୍ ହେଉଛି...", voice_transcribe_error:"ଏହି ଅଡିଓକୁ ଟ୍ରାନ୍ସକ୍ରାଇବ୍ କରାଯାଇପାରିଲା ନାହିଁ। ଆପଣ ନିଜେ ବର୍ଣ୍ଣନା ଟାଇପ୍ କରିପାରିବେ।",
   voice_mic_denied:"ମାଇକ୍ରୋଫୋନ୍ ଆକ୍ସେସ୍ ପ୍ରତ୍ୟାଖ୍ୟାନ କରାଯାଇଥିଲା କିମ୍ବା ଉପଲବ୍ଧ ନଥିଲା। ଏହା ପରିବର୍ତ୍ତେ ଆପଣ ଏକ ଅଡିଓ ଫାଇଲ୍ ଅପଲୋଡ୍ କରିପାରିବେ।", voice_prefix_label:"[ଅଡିଓରୁ ଟ୍ରାନ୍ସକ୍ରାଇବ୍ କରାଯାଇଛି]",
   section_geospatial:"ଭୌଗୋଳିକ ବୁଦ୍ଧିମତା", label_location_report:"ଏହା କେଉଁଠାରେ ଘଟିଲା? (ସହର / ଅଞ୍ଚଳ — ବୈକଳ୍ପିକ)",
-  geo_hotspots_title:"ଶୀର୍ଷ ସ୍ଥାନଗୁଡିକ (ଗତ 14 ଦିନ)", geo_no_data:"ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ସ୍ଥାନ ତଥ୍ୟ ନାହିଁ"
+  geo_hotspots_title:"ଶୀର୍ଷ ସ୍ଥାନଗୁଡିକ (ଗତ 14 ଦିନ)", geo_no_data:"ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ସ୍ଥାନ ତଥ୍ୟ ନାହିଁ",
+  official_strip_text:"ହ୍ୟାକାଥନ୍ ପ୍ରୋଟୋଟାଇପ୍ — ଏହା ଭାରତ ସରକାରଙ୍କ ସରକାରୀ ପ୍ଲାଟଫର୍ମ ନୁହେଁ",
+  footer_title:"ସୁରକ୍ଷା ଗ୍ରିଡ୍ — ଡିଜିଟାଲ୍ ପବ୍ଲିକ୍ ସେଫ୍ଟି ଇଣ୍ଟେଲିଜେନ୍ସ",
+  footer_disclaimer:"ହ୍ୟାକାଥନ୍ ପ୍ରୋଟୋଟାଇପ୍ — ଏହା ଭାରତ ସରକାରଙ୍କ ସରକାରୀ ପ୍ଲାଟଫର୍ମ ନୁହେଁ। ଜରୁରୀକାଳୀନ ପରିସ୍ଥିତିରେ, 1930 (ଜାତୀୟ ସାଇବର କ୍ରାଇମ୍ ହେଲ୍ପଲାଇନ୍) କିମ୍ବା ଆପଣଙ୍କ ନିକଟସ୍ଥ ପୋଲିସ୍ ଷ୍ଟେସନ୍ ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ।"
 },
 ur: {
   login_eyebrow:"آپ سراکشا گرڈ تک کیسے رسائی حاصل کر رہے ہیں منتخب کریں",
@@ -1611,7 +1712,10 @@ ur: {
   voice_transcribing:"آڈیو ٹرانسکرائب ہو رہا ہے...", voice_transcribe_error:"اس آڈیو کو ٹرانسکرائب نہیں کیا جا سکا۔ آپ خود تفصیل ٹائپ کر سکتے ہیں۔",
   voice_mic_denied:"مائیکروفون تک رسائی سے انکار کیا گیا یا دستیاب نہیں تھا۔ اس کے بجائے آپ آڈیو فائل اپ لوڈ کر سکتے ہیں۔", voice_prefix_label:"[آڈیو سے ٹرانسکرائب کیا گیا]",
   section_geospatial:"جغرافیائی انٹیلیجنس", label_location_report:"یہ کہاں ہوا؟ (شہر / علاقہ — اختیاری)",
-  geo_hotspots_title:"سرفہرست مقامات (پچھلے 14 دن)", geo_no_data:"ابھی تک کوئی مقام کا ڈیٹا نہیں ہے"
+  geo_hotspots_title:"سرفہرست مقامات (پچھلے 14 دن)", geo_no_data:"ابھی تک کوئی مقام کا ڈیٹا نہیں ہے",
+  official_strip_text:"ہیکاتھون پروٹو ٹائپ — یہ بھارت سرکار کا سرکاری پلیٹ فارم نہیں ہے",
+  footer_title:"سراکشا گرڈ — ڈیجیٹل پبلک سیفٹی انٹیلیجنس",
+  footer_disclaimer:"ہیکاتھون پروٹو ٹائپ — یہ بھارت سرکار کا سرکاری پلیٹ فارم نہیں ہے۔ ہنگامی صورتحال میں، 1930 (نیشنل سائبر کرائم ہیلپ لائن) یا اپنے قریبی پولیس اسٹیشن سے رابطہ کریں۔"
 }
 };
 
@@ -2833,7 +2937,7 @@ let trendChart = null;
 const CHART_PALETTE = ["#3B82F6", "#E23D28", "#F0A93B", "#2BB673", "#A78BFA", "#F472B6", "#38BDF8", "#FBBF24"];
 
 if(window.Chart){
-  Chart.defaults.color = "#8C97B2";
+  Chart.defaults.color = "#78828E"; // mid-tone gray, legible on both dark and light themes
   Chart.defaults.font.family = "Inter, system-ui, sans-serif";
   Chart.defaults.plugins.legend.labels.boxWidth = 10;
   Chart.defaults.plugins.legend.labels.font = { size: 10.5 };
@@ -2960,6 +3064,37 @@ function renderAnalyticsCharts(reports, currencyReports){
     }
   }
 }
+
+/* ============================================================
+   THEME TOGGLE (light / dark)
+   Persisted via sessionStorage. Defaults to dark, since the app
+   opens with both a citizen and command-center context in mind and
+   dark reads more "operations console" -- but a full light theme is
+   available for daytime/high-glare use or personal preference.
+   ============================================================ */
+
+const THEME_SESSION_KEY = "suraksha_theme";
+
+function applyTheme(theme){
+  const isLight = theme === "light";
+  document.body.classList.toggle("light-theme", isLight);
+  sessionStorage.setItem(THEME_SESSION_KEY, theme);
+  const icon = isLight ? "🌙" : "☀️";
+  const btnApp = document.getElementById("theme-toggle-btn");
+  const btnLogin = document.getElementById("theme-toggle-btn-login");
+  if(btnApp) btnApp.textContent = icon;
+  if(btnLogin) btnLogin.textContent = icon;
+}
+
+function toggleTheme(){
+  const isCurrentlyLight = document.body.classList.contains("light-theme");
+  applyTheme(isCurrentlyLight ? "dark" : "light");
+}
+
+document.getElementById("theme-toggle-btn").addEventListener("click", toggleTheme);
+document.getElementById("theme-toggle-btn-login").addEventListener("click", toggleTheme);
+
+applyTheme(sessionStorage.getItem(THEME_SESSION_KEY) || "dark");
 
 /* ============================================================
    LOGIN / ROLE GATE
