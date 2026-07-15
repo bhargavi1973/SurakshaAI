@@ -321,6 +321,17 @@
     padding:24px;background:radial-gradient(circle at 30% 20%, rgba(59,130,246,0.08), transparent 60%), var(--ink);
     position:relative;
   }
+  .login-topbar{
+    position:absolute;top:16px;right:16px;
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  }
+  .login-lang-select{
+    background:var(--panel);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:8px 10px;font-family:var(--font-body);font-size:12.5px;
+  }
+  @media (max-width:480px){
+    .login-topbar{position:static;justify-content:center;margin-bottom:20px;}
+  }
   .login-card{max-width:640px;width:100%;}
   .login-brand{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:8px;}
   .login-brand h1{font-family:var(--font-display);font-size:24px;margin:0;font-weight:700;}
@@ -455,7 +466,23 @@
 
 <!-- ============ LOGIN / ROLE SELECT SCREEN ============ -->
 <div class="login-shell" id="login-shell">
-  <button class="theme-toggle-btn" id="theme-toggle-btn-login" title="Toggle light/dark mode" style="position:absolute;top:16px;right:16px;">☀️</button>
+  <div class="login-topbar">
+    <select id="global-lang-login" class="login-lang-select">
+      <option value="en">English</option>
+      <option value="hi">हिंदी (Hindi)</option>
+      <option value="ta">தமிழ் (Tamil)</option>
+      <option value="te">తెలుగు (Telugu)</option>
+      <option value="bn">বাংলা (Bengali)</option>
+      <option value="mr">मराठी (Marathi)</option>
+      <option value="kn">ಕನ್ನಡ (Kannada)</option>
+      <option value="gu">ગુજરાતી (Gujarati)</option>
+      <option value="ml">മലയാളം (Malayalam)</option>
+      <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+      <option value="or">ଓଡ଼ିଆ (Odia)</option>
+      <option value="ur">اردو (Urdu)</option>
+    </select>
+    <button class="theme-toggle-btn" id="theme-toggle-btn-login" title="Toggle light/dark mode">☀️</button>
+  </div>
   <div class="login-card">
     <div class="login-brand">
       <div class="brand-mark">SG</div>
@@ -1742,6 +1769,12 @@ function applyTranslations(lang){
   document.documentElement.setAttribute("lang", lang);
   document.documentElement.setAttribute("dir", RTL_LANGS.includes(lang) ? "rtl" : "ltr");
   document.body.classList.toggle("script-active", lang !== "en");
+  // keep both language selectors (app topbar + login screen) in sync,
+  // regardless of which one triggered the change
+  const langSelectApp = document.getElementById("global-lang");
+  const langSelectLogin = document.getElementById("global-lang-login");
+  if(langSelectApp) langSelectApp.value = lang;
+  if(langSelectLogin) langSelectLogin.value = lang;
   // keep the role pill's label in sync with the selected language
   const activeRole = (typeof sessionStorage !== "undefined") ? sessionStorage.getItem("suraksha_role") : null;
   const rolePill = document.getElementById("role-pill");
@@ -1753,6 +1786,10 @@ function applyTranslations(lang){
 }
 
 document.getElementById("global-lang").addEventListener("change", (e)=>{
+  applyTranslations(e.target.value);
+});
+
+document.getElementById("global-lang-login").addEventListener("change", (e)=>{
   applyTranslations(e.target.value);
 });
 
