@@ -74,17 +74,25 @@ async function callGroq(body) {
   // Default to a current Groq vision-capable model. Groq's model lineup changes over time --
   // if this errors with "model not found", check https://console.groq.com for the current
   // vision-capable model name and set GROQ_MODEL to override.
-  const GROQ_MODEL = process.env.GROQ_MODEL || "meta-llama/llama-4-scout-17b-16e-instruct";
+  const GROQ_MODEL = process.env.GROQ_MODEL || "qwen/qwen3.6-27b";
   if (!GROQ_API_KEY) throw new Error("Missing GROQ_API_KEY");
+
+  const requestBody = {
+    model: GROQ_MODEL,
+    messages: toOpenAIMessages(body),
+    max_tokens: body.max_tokens || 1500
+  };
+  // Qwen3-family models on Groq default to "thinking" mode, which burns the token
+  // budget on a hidden <think> block before ever producing the actual answer -- for
+  // our structured-JSON use case we want the direct answer, not the reasoning trace.
+  if (/qwen3/i.test(GROQ_MODEL)) {
+    requestBody.reasoning_effort = "none";
+  }
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${GROQ_API_KEY}` },
-    body: JSON.stringify({
-      model: GROQ_MODEL,
-      messages: toOpenAIMessages(body),
-      max_tokens: body.max_tokens || 1000
-    })
+    body: JSON.stringify(requestBody)
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ? data.error.message : "Groq request failed");

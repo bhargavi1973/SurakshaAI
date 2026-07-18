@@ -2095,7 +2095,7 @@ Citizen's description: "${payload.description}"`;
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       model: "claude-sonnet-5",
-      max_tokens: 1000,
+      max_tokens: 1500,
       system: systemPrompt,
       messages: [{ role: "user", content: userMsg }]
     })
@@ -2104,8 +2104,7 @@ Citizen's description: "${payload.description}"`;
   const data = await response.json();
   const textBlock = (data.content || []).find(b => b.type === "text");
   if(!textBlock) throw new Error("No text response from classifier");
-  const cleaned = textBlock.text.replace(/```json|```/g, "").trim();
-  return JSON.parse(cleaned);
+  return extractJsonFromModelText(textBlock.text);
 }
 
 // ---------- submit handler ----------
@@ -2182,6 +2181,31 @@ function renderResult(result){
       <div class="ncrb-draft-disclaimer">${escapeHtml(dict.ncrb_draft_disclaimer)}</div>
     </div>
   `;
+}
+
+/* Some models (notably "thinking" models Groq sometimes routes requests to)
+   wrap their answer in a <think>...</think> reasoning block, or occasionally
+   add stray prose despite instructions not to. This strips known wrapper
+   patterns and falls back to extracting the first {...} object if a direct
+   parse fails, so a model swap on the provider's end doesn't silently break
+   classification. */
+function extractJsonFromModelText(text){
+  if(!text) throw new Error("Empty response from model");
+  let cleaned = text.replace(/```json|```/g, "");
+  cleaned = cleaned.replace(/<think>[\s\S]*?<\/think>/gi, ""); // closed think block
+  cleaned = cleaned.replace(/<think>[\s\S]*$/i, "");           // unclosed think block (ran out of tokens mid-thought)
+  cleaned = cleaned.trim();
+
+  try{
+    return JSON.parse(cleaned);
+  }catch(e){
+    const start = cleaned.indexOf("{");
+    const end = cleaned.lastIndexOf("}");
+    if(start !== -1 && end !== -1 && end > start){
+      return JSON.parse(cleaned.slice(start, end + 1));
+    }
+    throw e;
+  }
 }
 
 function escapeHtml(str){
@@ -2724,7 +2748,7 @@ Be calibrated and conservative. If any image is blurry, poorly lit, or too small
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       model: "claude-sonnet-5",
-      max_tokens: 1000,
+      max_tokens: 1500,
       system: systemPrompt,
       messages: [{ role: "user", content: contentBlocks }]
     })
@@ -2733,8 +2757,7 @@ Be calibrated and conservative. If any image is blurry, poorly lit, or too small
   const data = await response.json();
   const textBlock = (data.content || []).find(b => b.type === "text");
   if(!textBlock) throw new Error("No text response from vision classifier");
-  const cleaned = textBlock.text.replace(/```json|```/g, "").trim();
-  return JSON.parse(cleaned);
+  return extractJsonFromModelText(textBlock.text);
 }
 
 document.getElementById("btn-scan").addEventListener("click", async ()=>{
