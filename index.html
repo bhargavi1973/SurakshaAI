@@ -66,11 +66,12 @@
 
   /* ---------- theme toggle button ---------- */
   .theme-toggle-btn{
-    font-size:16px;padding:7px 10px;border-radius:8px;
-    border:1px solid var(--line);background:var(--panel-2);cursor:pointer;
+    font-size:16px;padding:8px 10px;border-radius:9px;
+    border:none;background:transparent;cursor:pointer;
     display:inline-flex;align-items:center;justify-content:center;line-height:1;
+    flex-shrink:0;transition:background .15s;
   }
-  .theme-toggle-btn:hover{border-color:var(--brand);}
+  .theme-toggle-btn:hover{background:var(--panel-2);}
 
   /* ---------- government-style footer ---------- */
   .gov-footer{
@@ -113,7 +114,14 @@
     flex-wrap:wrap;gap:14px;
   }
   .topbar-left{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
-  .lang-theme-group{display:flex;align-items:center;gap:8px;}
+  .lang-theme-group{
+    display:flex;align-items:center;gap:6px;flex-wrap:nowrap;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:6px;
+  }
+  .lang-theme-group #global-lang{
+    width:auto;max-width:150px;flex-shrink:1;
+  }
   .brand{display:flex;align-items:center;gap:12px;}
   .brand-mark{
     width:38px;height:38px;border-radius:8px;
@@ -134,9 +142,12 @@
   .lang-select-wrap{display:flex;align-items:center;gap:8px;}
   .lang-select-wrap label{margin:0;font-size:11px;color:var(--text-dim);text-transform:none;font-weight:600;}
   #global-lang{
-    background:var(--panel);border:1px solid var(--line);color:var(--text);
-    border-radius:8px;padding:8px 10px;font-family:var(--font-body);font-size:13px;
+    background:transparent;border:none;color:var(--text);
+    border-radius:9px;padding:8px 10px;font-family:var(--font-body);font-size:13px;
+    cursor:pointer;
   }
+  #global-lang:hover{background:var(--panel-2);}
+  #global-lang:focus{outline:2px solid var(--brand);outline-offset:-1px;}
   .tabs{display:flex;gap:4px;background:var(--panel);padding:4px;border-radius:10px;border:1px solid var(--line);}
   .tab-btn{
     font-family:var(--font-body);font-weight:600;font-size:13.5px;
@@ -330,14 +341,20 @@
   }
   .login-topbar{
     position:absolute;top:16px;left:16px;
-    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    display:flex;align-items:center;gap:6px;flex-wrap:nowrap;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:6px;box-shadow:0 4px 14px rgba(0,0,0,0.10);
   }
   .login-lang-select{
-    background:var(--panel);border:1px solid var(--line);color:var(--text);
-    border-radius:8px;padding:8px 10px;font-family:var(--font-body);font-size:12.5px;
+    width:auto;max-width:150px;background:transparent;border:none;color:var(--text);
+    border-radius:9px;padding:8px 10px;font-family:var(--font-body);font-size:12.5px;
+    cursor:pointer;flex-shrink:1;
   }
+  .login-lang-select:hover{background:var(--panel-2);}
+  .login-lang-select:focus{outline:2px solid var(--brand);outline-offset:-1px;}
   @media (max-width:480px){
-    .login-topbar{position:static;justify-content:center;margin-bottom:20px;}
+    .login-topbar{position:static;justify-content:center;margin:0 auto 20px;width:fit-content;}
+    .login-lang-select{max-width:130px;}
   }
   .login-card{max-width:640px;width:100%;}
   .login-brand{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:8px;}
@@ -461,11 +478,26 @@
     background:var(--panel-2);padding:3px 9px;border-radius:12px;color:var(--caution);
   }
   .leaflet-popup-content{font-family:var(--font-body);font-size:12.5px;}
+
+  /* ---------- fraud network graph ---------- */
+  .fraud-network-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px;margin-bottom:28px;
+  }
+  .fraud-network-container{height:420px;border-radius:8px;overflow:hidden;background:var(--panel-2);position:relative;}
+  .fraud-network-legend{
+    display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;padding-top:12px;
+    border-top:1px solid var(--line);font-size:11.5px;color:var(--text-dim);
+  }
+  .fraud-network-legend span{display:inline-flex;align-items:center;gap:6px;}
+  .legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0;}
+  .legend-hex{width:12px;height:12px;display:inline-block;flex-shrink:0;clip-path:polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/10.1.0/standalone/umd/vis-network.min.js"></script>
 </head>
 <body>
 
@@ -719,6 +751,20 @@
       <div class="stat-card">
         <p class="stat-num" id="stat-currency-flagged" style="color:var(--danger);">0</p>
         <div class="stat-label" data-i18n="stat_currency_flagged">Notes flagged suspicious</div>
+      </div>
+    </div>
+
+    <div class="section-title"><span data-i18n="section_fraud_network">Fraud Network Graph</span></div>
+    <div class="fraud-network-card">
+      <div class="fraud-network-container" id="fraud-network">
+        <div class="chart-empty" id="fraud-network-empty" style="height:100%;" data-i18n="fraud_network_no_data">Not enough linked reports yet — campaigns with 2+ reports sharing a number or pattern will appear here as a connected graph.</div>
+      </div>
+      <div class="fraud-network-legend">
+        <span><i class="legend-hex" style="background:#E23D28;"></i> <span data-i18n="legend_campaign_high">High-severity campaign</span></span>
+        <span><i class="legend-hex" style="background:#F0A93B;"></i> <span data-i18n="legend_campaign_medium">Medium-severity campaign</span></span>
+        <span><i class="legend-hex" style="background:#2BB673;"></i> <span data-i18n="legend_campaign_low">Low-severity campaign</span></span>
+        <span><i class="legend-dot" style="background:#E23D28;"></i> <span data-i18n="legend_report_high">High-risk report</span></span>
+        <span><i class="legend-dot" style="background:#78828E;"></i> <span data-i18n="legend_report_other">Other linked report</span></span>
       </div>
     </div>
 
@@ -1487,7 +1533,11 @@ en: {
   geo_hotspots_title:"Top Locations (last 14 days)", geo_no_data:"No location data yet",
   official_strip_text:"HACKATHON PROTOTYPE — NOT AN OFFICIAL GOVERNMENT OF INDIA PLATFORM",
   footer_title:"SurakshaAI — Digital Public Safety Intelligence",
-  footer_disclaimer:"Hackathon prototype — not an official Government of India platform. In an emergency, contact 1930 (National Cybercrime Helpline) or your nearest police station."
+  footer_disclaimer:"Hackathon prototype — not an official Government of India platform. In an emergency, contact 1930 (National Cybercrime Helpline) or your nearest police station.",
+  section_fraud_network:"Fraud Network Graph",
+  fraud_network_no_data:"Not enough linked reports yet — campaigns with 2+ reports sharing a number or pattern will appear here as a connected graph.",
+  legend_campaign_high:"High-severity campaign", legend_campaign_medium:"Medium-severity campaign", legend_campaign_low:"Low-severity campaign",
+  legend_report_high:"High-risk report", legend_report_other:"Other linked report"
 },
 hi: {
   login_eyebrow:"आप SurakshaAI तक कैसे पहुँच रहे हैं चुनें",
@@ -1511,7 +1561,11 @@ hi: {
   geo_hotspots_title:"शीर्ष स्थान (पिछले 14 दिन)", geo_no_data:"अभी तक कोई स्थान डेटा नहीं है",
   official_strip_text:"हैकाथॉन प्रोटोटाइप — भारत सरकार का आधिकारिक मंच नहीं है",
   footer_title:"SurakshaAI — डिजिटल सार्वजनिक सुरक्षा इंटेलिजेंस",
-  footer_disclaimer:"हैकाथॉन प्रोटोटाइप — भारत सरकार का आधिकारिक मंच नहीं है। आपातकाल में, 1930 (राष्ट्रीय साइबर क्राइम हेल्पलाइन) या अपने नजदीकी पुलिस स्टेशन से संपर्क करें।"
+  footer_disclaimer:"हैकाथॉन प्रोटोटाइप — भारत सरकार का आधिकारिक मंच नहीं है। आपातकाल में, 1930 (राष्ट्रीय साइबर क्राइम हेल्पलाइन) या अपने नजदीकी पुलिस स्टेशन से संपर्क करें।",
+  section_fraud_network:"धोखाधड़ी नेटवर्क ग्राफ",
+  fraud_network_no_data:"अभी तक पर्याप्त जुड़ी हुई रिपोर्टें नहीं हैं — जिन अभियानों में 2+ रिपोर्टें एक ही नंबर या पैटर्न साझा करती हैं वे यहां एक जुड़े हुए ग्राफ के रूप में दिखाई देंगी।",
+  legend_campaign_high:"उच्च-गंभीरता अभियान", legend_campaign_medium:"मध्यम-गंभीरता अभियान", legend_campaign_low:"कम-गंभीरता अभियान",
+  legend_report_high:"उच्च-जोखिम रिपोर्ट", legend_report_other:"अन्य जुड़ी रिपोर्ट"
 },
 ta: {
   login_eyebrow:"SurakshaAIடை நீங்கள் எவ்வாறு அணுகுகிறீர்கள் என்பதைத் தேர்ந்தெடுக்கவும்",
@@ -1535,7 +1589,11 @@ ta: {
   geo_hotspots_title:"முதன்மை இடங்கள் (கடந்த 14 நாட்கள்)", geo_no_data:"இன்னும் இட தரவு இல்லை",
   official_strip_text:"ஹேக்கத்தான் முன்மாதிரி — இது இந்திய அரசின் அதிகாரப்பூர்வ தளம் அல்ல",
   footer_title:"SurakshaAI — டிஜிட்டல் பொது பாதுகாப்பு நுண்ணறிவு",
-  footer_disclaimer:"ஹேக்கத்தான் முன்மாதிரி — இது இந்திய அரசின் அதிகாரப்பூர்வ தளம் அல்ல. அவசரநிலையில், 1930 (தேசிய சைபர் கிரைம் ஹெல்ப்லைன்) அல்லது உங்கள் அருகிலுள்ள காவல் நிலையத்தை தொடர்பு கொள்ளவும்."
+  footer_disclaimer:"ஹேக்கத்தான் முன்மாதிரி — இது இந்திய அரசின் அதிகாரப்பூர்வ தளம் அல்ல. அவசரநிலையில், 1930 (தேசிய சைபர் கிரைம் ஹெல்ப்லைன்) அல்லது உங்கள் அருகிலுள்ள காவல் நிலையத்தை தொடர்பு கொள்ளவும்.",
+  section_fraud_network:"மோசடி நெட்வொர்க் வரைபடம்",
+  fraud_network_no_data:"இன்னும் போதுமான இணைக்கப்பட்ட அறிக்கைகள் இல்லை — ஒரே எண் அல்லது முறையைப் பகிரும் 2+ அறிக்கைகள் கொண்ட பிரச்சாரங்கள் இங்கே இணைக்கப்பட்ட வரைபடமாகத் தோன்றும்.",
+  legend_campaign_high:"அதிக தீவிர பிரச்சாரம்", legend_campaign_medium:"நடுத்தர தீவிர பிரச்சாரம்", legend_campaign_low:"குறைந்த தீவிர பிரச்சாரம்",
+  legend_report_high:"அதிக ஆபத்து அறிக்கை", legend_report_other:"பிற இணைக்கப்பட்ட அறிக்கை"
 },
 te: {
   login_eyebrow:"మీరు SurakshaAI‌ను ఎలా యాక్సెస్ చేస్తున్నారో ఎంచుకోండి",
@@ -1559,7 +1617,11 @@ te: {
   geo_hotspots_title:"అగ్రస్థాన ప్రదేశాలు (గత 14 రోజులు)", geo_no_data:"ఇంకా స్థాన డేటా లేదు",
   official_strip_text:"హ్యాకథాన్ ప్రోటోటైప్ — ఇది భారత ప్రభుత్వ అధికారిక వేదిక కాదు",
   footer_title:"SurakshaAI — డిజిటల్ పబ్లిక్ సేఫ్టీ ఇంటెలిజెన్స్",
-  footer_disclaimer:"హ్యాకథాన్ ప్రోటోటైప్ — ఇది భారత ప్రభుత్వ అధికారిక వేదిక కాదు. అత్యవసర పరిస్థితిలో, 1930 (జాతీయ సైబర్ క్రైమ్ హెల్ప్‌లైన్) లేదా మీ సమీప పోలీస్ స్టేషన్‌ను సంప్రదించండి."
+  footer_disclaimer:"హ్యాకథాన్ ప్రోటోటైప్ — ఇది భారత ప్రభుత్వ అధికారిక వేదిక కాదు. అత్యవసర పరిస్థితిలో, 1930 (జాతీయ సైబర్ క్రైమ్ హెల్ప్‌లైన్) లేదా మీ సమీప పోలీస్ స్టేషన్‌ను సంప్రదించండి.",
+  section_fraud_network:"మోసం నెట్‌వర్క్ గ్రాఫ్",
+  fraud_network_no_data:"ఇంకా తగినంత లింక్ చేయబడిన నివేదికలు లేవు — ఒకే నంబర్ లేదా నమూనాను పంచుకునే 2+ నివేదికలు ఉన్న ప్రచారాలు ఇక్కడ కనెక్ట్ చేయబడిన గ్రాఫ్‌గా కనిపిస్తాయి.",
+  legend_campaign_high:"అధిక తీవ్రత ప్రచారం", legend_campaign_medium:"మధ్యస్థ తీవ్రత ప్రచారం", legend_campaign_low:"తక్కువ తీవ్రత ప్రచారం",
+  legend_report_high:"అధిక-ప్రమాద నివేదిక", legend_report_other:"ఇతర లింక్ చేయబడిన నివేదిక"
 },
 bn: {
   login_eyebrow:"আপনি SurakshaAI কীভাবে অ্যাক্সেস করছেন তা বেছে নিন",
@@ -1583,7 +1645,11 @@ bn: {
   geo_hotspots_title:"শীর্ষ স্থান (গত ১৪ দিন)", geo_no_data:"এখনও কোনো অবস্থানের তথ্য নেই",
   official_strip_text:"হ্যাকাথন প্রোটোটাইপ — এটি ভারত সরকারের সরকারি প্ল্যাটফর্ম নয়",
   footer_title:"SurakshaAI — ডিজিটাল পাবলিক সেফটি ইন্টেলিজেন্স",
-  footer_disclaimer:"হ্যাকাথন প্রোটোটাইপ — এটি ভারত সরকারের সরকারি প্ল্যাটফর্ম নয়। জরুরী অবস্থায়, 1930 (জাতীয় সাইবার ক্রাইম হেল্পলাইন) বা আপনার নিকটতম থানায় যোগাযোগ করুন।"
+  footer_disclaimer:"হ্যাকাথন প্রোটোটাইপ — এটি ভারত সরকারের সরকারি প্ল্যাটফর্ম নয়। জরুরী অবস্থায়, 1930 (জাতীয় সাইবার ক্রাইম হেল্পলাইন) বা আপনার নিকটতম থানায় যোগাযোগ করুন।",
+  section_fraud_network:"প্রতারণা নেটওয়ার্ক গ্রাফ",
+  fraud_network_no_data:"এখনও পর্যাপ্ত সংযুক্ত রিপোর্ট নেই — একই নম্বর বা প্যাটার্ন ভাগ করে এমন ২+ রিপোর্ট সহ প্রচারণা এখানে সংযুক্ত গ্রাফ হিসেবে দেখা যাবে।",
+  legend_campaign_high:"উচ্চ-তীব্রতা প্রচারণা", legend_campaign_medium:"মাঝারি-তীব্রতা প্রচারণা", legend_campaign_low:"নিম্ন-তীব্রতা প্রচারণা",
+  legend_report_high:"উচ্চ-ঝুঁকির রিপোর্ট", legend_report_other:"অন্যান্য সংযুক্ত রিপোর্ট"
 },
 mr: {
   login_eyebrow:"तुम्ही SurakshaAI कसे अॅक्सेस करत आहात ते निवडा",
@@ -1607,7 +1673,11 @@ mr: {
   geo_hotspots_title:"शीर्ष ठिकाणे (गेले 14 दिवस)", geo_no_data:"अद्याप स्थान डेटा नाही",
   official_strip_text:"हॅकाथॉन प्रोटोटाइप — हे भारत सरकारचे अधिकृत व्यासपीठ नाही",
   footer_title:"SurakshaAI — डिजिटल सार्वजनिक सुरक्षा इंटेलिजन्स",
-  footer_disclaimer:"हॅकाथॉन प्रोटोटाइप — हे भारत सरकारचे अधिकृत व्यासपीठ नाही. आणीबाणीच्या परिस्थितीत, 1930 (राष्ट्रीय सायबर क्राइम हेल्पलाइन) किंवा तुमच्या जवळच्या पोलीस स्टेशनशी संपर्क साधा."
+  footer_disclaimer:"हॅकाथॉन प्रोटोटाइप — हे भारत सरकारचे अधिकृत व्यासपीठ नाही. आणीबाणीच्या परिस्थितीत, 1930 (राष्ट्रीय सायबर क्राइम हेल्पलाइन) किंवा तुमच्या जवळच्या पोलीस स्टेशनशी संपर्क साधा.",
+  section_fraud_network:"फसवणूक नेटवर्क आलेख",
+  fraud_network_no_data:"अद्याप पुरेशा जोडलेल्या तक्रारी नाहीत — समान नंबर किंवा नमुना सामायिक करणाऱ्या 2+ तक्रारी असलेल्या मोहिमा येथे जोडलेल्या आलेखाच्या रूपात दिसतील.",
+  legend_campaign_high:"उच्च-तीव्रता मोहीम", legend_campaign_medium:"मध्यम-तीव्रता मोहीम", legend_campaign_low:"कमी-तीव्रता मोहीम",
+  legend_report_high:"उच्च-धोका तक्रार", legend_report_other:"इतर जोडलेली तक्रार"
 },
 kn: {
   login_eyebrow:"ನೀವು SurakshaAI ಅನ್ನು ಹೇಗೆ ಪ್ರವೇಶಿಸುತ್ತಿದ್ದೀರಿ ಎಂಬುದನ್ನು ಆಯ್ಕೆಮಾಡಿ",
@@ -1631,7 +1701,11 @@ kn: {
   geo_hotspots_title:"ಅಗ್ರ ಸ್ಥಳಗಳು (ಕಳೆದ 14 ದಿನಗಳು)", geo_no_data:"ಇನ್ನೂ ಸ್ಥಳ ಡೇಟಾ ಇಲ್ಲ",
   official_strip_text:"ಹ್ಯಾಕಥಾನ್ ಪ್ರೋಟೋಟೈಪ್ — ಇದು ಭಾರತ ಸರ್ಕಾರದ ಅಧಿಕೃತ ವೇದಿಕೆಯಲ್ಲ",
   footer_title:"SurakshaAI — ಡಿಜಿಟಲ್ ಪಬ್ಲಿಕ್ ಸೇಫ್ಟಿ ಇಂಟೆಲಿಜೆನ್ಸ್",
-  footer_disclaimer:"ಹ್ಯಾಕಥಾನ್ ಪ್ರೋಟೋಟೈಪ್ — ಇದು ಭಾರತ ಸರ್ಕಾರದ ಅಧಿಕೃತ ವೇದಿಕೆಯಲ್ಲ. ತುರ್ತು ಪರಿಸ್ಥಿತಿಯಲ್ಲಿ, 1930 (ರಾಷ್ಟ್ರೀಯ ಸೈಬರ್ ಕ್ರೈಮ್ ಹೆಲ್ಪ್‌ಲೈನ್) ಅಥವಾ ನಿಮ್ಮ ಹತ್ತಿರದ ಪೊಲೀಸ್ ಠಾಣೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ."
+  footer_disclaimer:"ಹ್ಯಾಕಥಾನ್ ಪ್ರೋಟೋಟೈಪ್ — ಇದು ಭಾರತ ಸರ್ಕಾರದ ಅಧಿಕೃತ ವೇದಿಕೆಯಲ್ಲ. ತುರ್ತು ಪರಿಸ್ಥಿತಿಯಲ್ಲಿ, 1930 (ರಾಷ್ಟ್ರೀಯ ಸೈಬರ್ ಕ್ರೈಮ್ ಹೆಲ್ಪ್‌ಲೈನ್) ಅಥವಾ ನಿಮ್ಮ ಹತ್ತಿರದ ಪೊಲೀಸ್ ಠಾಣೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ.",
+  section_fraud_network:"ವಂಚನೆ ನೆಟ್‌ವರ್ಕ್ ಗ್ರಾಫ್",
+  fraud_network_no_data:"ಇನ್ನೂ ಸಾಕಷ್ಟು ಲಿಂಕ್ ಮಾಡಿದ ವರದಿಗಳಿಲ್ಲ — ಒಂದೇ ಸಂಖ್ಯೆ ಅಥವಾ ಮಾದರಿಯನ್ನು ಹಂಚಿಕೊಳ್ಳುವ 2+ ವರದಿಗಳನ್ನು ಹೊಂದಿರುವ ಪ್ರಚಾರಗಳು ಇಲ್ಲಿ ಸಂಪರ್ಕಿತ ಗ್ರಾಫ್ ಆಗಿ ಕಾಣಿಸಿಕೊಳ್ಳುತ್ತವೆ.",
+  legend_campaign_high:"ಹೆಚ್ಚಿನ ತೀವ್ರತೆಯ ಪ್ರಚಾರ", legend_campaign_medium:"ಮಧ್ಯಮ ತೀವ್ರತೆಯ ಪ್ರಚಾರ", legend_campaign_low:"ಕಡಿಮೆ ತೀವ್ರತೆಯ ಪ್ರಚಾರ",
+  legend_report_high:"ಹೆಚ್ಚಿನ ಅಪಾಯದ ವರದಿ", legend_report_other:"ಇತರ ಲಿಂಕ್ ಮಾಡಿದ ವರದಿ"
 },
 gu: {
   login_eyebrow:"તમે SurakshaAIને કેવી રીતે એક્સેસ કરી રહ્યા છો તે પસંદ કરો",
@@ -1655,7 +1729,11 @@ gu: {
   geo_hotspots_title:"ટોચના સ્થાનો (છેલ્લા 14 દિવસ)", geo_no_data:"હજુ સુધી કોઈ સ્થાન ડેટા નથી",
   official_strip_text:"હેકાથોન પ્રોટોટાઇપ — આ ભારત સરકારનું સત્તાવાર પ્લેટફોર્મ નથી",
   footer_title:"SurakshaAI — ડિજિટલ પબ્લિક સેફ્ટી ઇન્ટેલિજન્સ",
-  footer_disclaimer:"હેકાથોન પ્રોટોટાઇપ — આ ભારત સરકારનું સત્તાવાર પ્લેટફોર્મ નથી. કટોકટીમાં, 1930 (નેશનલ સાયબર ક્રાઇમ હેલ્પલાઇન) અથવા તમારા નજીકના પોલીસ સ્ટેશનનો સંપર્ક કરો."
+  footer_disclaimer:"હેકાથોન પ્રોટોટાઇપ — આ ભારત સરકારનું સત્તાવાર પ્લેટફોર્મ નથી. કટોકટીમાં, 1930 (નેશનલ સાયબર ક્રાઇમ હેલ્પલાઇન) અથવા તમારા નજીકના પોલીસ સ્ટેશનનો સંપર્ક કરો.",
+  section_fraud_network:"છેતરપિંડી નેટવર્ક ગ્રાફ",
+  fraud_network_no_data:"હજુ સુધી પૂરતા જોડાયેલા રિપોર્ટ્સ નથી — સમાન નંબર અથવા પેટર્ન શેર કરતી 2+ રિપોર્ટ્સ ધરાવતી ઝુંબેશો અહીં જોડાયેલા ગ્રાફ તરીકે દેખાશે.",
+  legend_campaign_high:"ઉચ્ચ-તીવ્રતા ઝુંબેશ", legend_campaign_medium:"મધ્યમ-તીવ્રતા ઝુંબેશ", legend_campaign_low:"નિમ્ન-તીવ્રતા ઝુંબેશ",
+  legend_report_high:"ઉચ્ચ-જોખમ રિપોર્ટ", legend_report_other:"અન્ય જોડાયેલ રિપોર્ટ"
 },
 ml: {
   login_eyebrow:"നിങ്ങൾ SurakshaAI എങ്ങനെ ആക്‌സസ് ചെയ്യുന്നു എന്ന് തിരഞ്ഞെടുക്കുക",
@@ -1679,7 +1757,11 @@ ml: {
   geo_hotspots_title:"മുൻനിര സ്ഥലങ്ങൾ (കഴിഞ്ഞ 14 ദിവസം)", geo_no_data:"ഇതുവരെ സ്ഥല ഡാറ്റയില്ല",
   official_strip_text:"ഹാക്കത്തോൺ പ്രോട്ടോടൈപ്പ് — ഇത് ഇന്ത്യാ ഗവൺമെന്റിന്റെ ഔദ്യോഗിക പ്ലാറ്റ്‌ഫോമല്ല",
   footer_title:"SurakshaAI — ഡിജിറ്റൽ പബ്ലിക് സേഫ്റ്റി ഇന്റലിജൻസ്",
-  footer_disclaimer:"ഹാക്കത്തോൺ പ്രോട്ടോടൈപ്പ് — ഇത് ഇന്ത്യാ ഗവൺമെന്റിന്റെ ഔദ്യോഗിക പ്ലാറ്റ്‌ഫോമല്ല. അടിയന്തര സാഹചര്യത്തിൽ, 1930 (ദേശീയ സൈബർ ക്രൈം ഹെൽപ്‌ലൈൻ) അല്ലെങ്കിൽ നിങ്ങളുടെ അടുത്തുള്ള പോലീസ് സ്റ്റേഷനെ ബന്ധപ്പെടുക."
+  footer_disclaimer:"ഹാക്കത്തോൺ പ്രോട്ടോടൈപ്പ് — ഇത് ഇന്ത്യാ ഗവൺമെന്റിന്റെ ഔദ്യോഗിക പ്ലാറ്റ്‌ഫോമല്ല. അടിയന്തര സാഹചര്യത്തിൽ, 1930 (ദേശീയ സൈബർ ക്രൈം ഹെൽപ്‌ലൈൻ) അല്ലെങ്കിൽ നിങ്ങളുടെ അടുത്തുള്ള പോലീസ് സ്റ്റേഷനെ ബന്ധപ്പെടുക.",
+  section_fraud_network:"തട്ടിപ്പ് നെറ്റ്‌വർക്ക് ഗ്രാഫ്",
+  fraud_network_no_data:"ഇതുവരെ മതിയായ ലിങ്ക് ചെയ്ത റിപ്പോർട്ടുകളില്ല — ഒരേ നമ്പറോ പാറ്റേണോ പങ്കിടുന്ന 2+ റിപ്പോർട്ടുകളുള്ള കാമ്പെയ്‌നുകൾ ഇവിടെ ബന്ധിപ്പിച്ച ഗ്രാഫായി ദൃശ്യമാകും.",
+  legend_campaign_high:"ഉയർന്ന തീവ്രത കാമ്പെയ്ൻ", legend_campaign_medium:"ഇടത്തരം തീവ്രത കാമ്പെയ്ൻ", legend_campaign_low:"കുറഞ്ഞ തീവ്രത കാമ്പെയ്ൻ",
+  legend_report_high:"ഉയർന്ന അപകടസാധ്യതയുള്ള റിപ്പോർട്ട്", legend_report_other:"മറ്റ് ലിങ്ക് ചെയ്ത റിപ്പോർട്ട്"
 },
 pa: {
   login_eyebrow:"ਤੁਸੀਂ SurakshaAI ਤੱਕ ਕਿਵੇਂ ਪਹੁੰਚ ਰਹੇ ਹੋ ਚੁਣੋ",
@@ -1703,7 +1785,11 @@ pa: {
   geo_hotspots_title:"ਪ੍ਰਮੁੱਖ ਸਥਾਨ (ਪਿਛਲੇ 14 ਦਿਨ)", geo_no_data:"ਅਜੇ ਤੱਕ ਕੋਈ ਸਥਾਨ ਡਾਟਾ ਨਹੀਂ",
   official_strip_text:"ਹੈਕਾਥੌਨ ਪ੍ਰੋਟੋਟਾਈਪ — ਇਹ ਭਾਰਤ ਸਰਕਾਰ ਦਾ ਅਧਿਕਾਰਤ ਪਲੇਟਫਾਰਮ ਨਹੀਂ ਹੈ",
   footer_title:"SurakshaAI — ਡਿਜੀਟਲ ਪਬਲਿਕ ਸੇਫਟੀ ਇੰਟੈਲੀਜੈਂਸ",
-  footer_disclaimer:"ਹੈਕਾਥੌਨ ਪ੍ਰੋਟੋਟਾਈਪ — ਇਹ ਭਾਰਤ ਸਰਕਾਰ ਦਾ ਅਧਿਕਾਰਤ ਪਲੇਟਫਾਰਮ ਨਹੀਂ ਹੈ। ਐਮਰਜੈਂਸੀ ਵਿੱਚ, 1930 (ਨੈਸ਼ਨਲ ਸਾਈਬਰ ਕ੍ਰਾਈਮ ਹੈਲਪਲਾਈਨ) ਜਾਂ ਆਪਣੇ ਨਜ਼ਦੀਕੀ ਪੁਲਿਸ ਸਟੇਸ਼ਨ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।"
+  footer_disclaimer:"ਹੈਕਾਥੌਨ ਪ੍ਰੋਟੋਟਾਈਪ — ਇਹ ਭਾਰਤ ਸਰਕਾਰ ਦਾ ਅਧਿਕਾਰਤ ਪਲੇਟਫਾਰਮ ਨਹੀਂ ਹੈ। ਐਮਰਜੈਂਸੀ ਵਿੱਚ, 1930 (ਨੈਸ਼ਨਲ ਸਾਈਬਰ ਕ੍ਰਾਈਮ ਹੈਲਪਲਾਈਨ) ਜਾਂ ਆਪਣੇ ਨਜ਼ਦੀਕੀ ਪੁਲਿਸ ਸਟੇਸ਼ਨ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।",
+  section_fraud_network:"ਧੋਖਾਧੜੀ ਨੈੱਟਵਰਕ ਗ੍ਰਾਫ",
+  fraud_network_no_data:"ਅਜੇ ਤੱਕ ਲੋੜੀਂਦੀਆਂ ਲਿੰਕ ਕੀਤੀਆਂ ਰਿਪੋਰਟਾਂ ਨਹੀਂ ਹਨ — ਇੱਕੋ ਨੰਬਰ ਜਾਂ ਪੈਟਰਨ ਸਾਂਝਾ ਕਰਨ ਵਾਲੀਆਂ 2+ ਰਿਪੋਰਟਾਂ ਵਾਲੀਆਂ ਮੁਹਿੰਮਾਂ ਇੱਥੇ ਜੁੜੇ ਗ੍ਰਾਫ ਵਜੋਂ ਦਿਖਾਈ ਦੇਣਗੀਆਂ।",
+  legend_campaign_high:"ਉੱਚ-ਤੀਬਰਤਾ ਮੁਹਿੰਮ", legend_campaign_medium:"ਦਰਮਿਆਨੀ-ਤੀਬਰਤਾ ਮੁਹਿੰਮ", legend_campaign_low:"ਘੱਟ-ਤੀਬਰਤਾ ਮੁਹਿੰਮ",
+  legend_report_high:"ਉੱਚ-ਜੋਖਮ ਰਿਪੋਰਟ", legend_report_other:"ਹੋਰ ਲਿੰਕ ਕੀਤੀ ਰਿਪੋਰਟ"
 },
 or: {
   login_eyebrow:"ଆପଣ SurakshaAI କିପରି ଆକ୍ସେସ୍ କରୁଛନ୍ତି ବାଛନ୍ତୁ",
@@ -1727,7 +1813,11 @@ or: {
   geo_hotspots_title:"ଶୀର୍ଷ ସ୍ଥାନଗୁଡିକ (ଗତ 14 ଦିନ)", geo_no_data:"ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ସ୍ଥାନ ତଥ୍ୟ ନାହିଁ",
   official_strip_text:"ହ୍ୟାକାଥନ୍ ପ୍ରୋଟୋଟାଇପ୍ — ଏହା ଭାରତ ସରକାରଙ୍କ ସରକାରୀ ପ୍ଲାଟଫର୍ମ ନୁହେଁ",
   footer_title:"SurakshaAI — ଡିଜିଟାଲ୍ ପବ୍ଲିକ୍ ସେଫ୍ଟି ଇଣ୍ଟେଲିଜେନ୍ସ",
-  footer_disclaimer:"ହ୍ୟାକାଥନ୍ ପ୍ରୋଟୋଟାଇପ୍ — ଏହା ଭାରତ ସରକାରଙ୍କ ସରକାରୀ ପ୍ଲାଟଫର୍ମ ନୁହେଁ। ଜରୁରୀକାଳୀନ ପରିସ୍ଥିତିରେ, 1930 (ଜାତୀୟ ସାଇବର କ୍ରାଇମ୍ ହେଲ୍ପଲାଇନ୍) କିମ୍ବା ଆପଣଙ୍କ ନିକଟସ୍ଥ ପୋଲିସ୍ ଷ୍ଟେସନ୍ ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ।"
+  footer_disclaimer:"ହ୍ୟାକାଥନ୍ ପ୍ରୋଟୋଟାଇପ୍ — ଏହା ଭାରତ ସରକାରଙ୍କ ସରକାରୀ ପ୍ଲାଟଫର୍ମ ନୁହେଁ। ଜରୁରୀକାଳୀନ ପରିସ୍ଥିତିରେ, 1930 (ଜାତୀୟ ସାଇବର କ୍ରାଇମ୍ ହେଲ୍ପଲାଇନ୍) କିମ୍ବା ଆପଣଙ୍କ ନିକଟସ୍ଥ ପୋଲିସ୍ ଷ୍ଟେସନ୍ ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ।",
+  section_fraud_network:"ଠକେଇ ନେଟୱାର୍କ ଗ୍ରାଫ୍",
+  fraud_network_no_data:"ଏପର୍ଯ୍ୟନ୍ତ ଯଥେଷ୍ଟ ଲିଙ୍କ୍ ହୋଇଥିବା ରିପୋର୍ଟ ନାହିଁ — ସମାନ ନମ୍ବର କିମ୍ବା ପାଟର୍ନ ସେୟାର କରୁଥିବା 2+ ରିପୋର୍ଟ ଥିବା ଅଭିଯାନଗୁଡିକ ଏଠାରେ ସଂଯୁକ୍ତ ଗ୍ରାଫ୍ ଭାବରେ ଦେଖାଯିବ।",
+  legend_campaign_high:"ଉଚ୍ଚ-ତୀବ୍ରତା ଅଭିଯାନ", legend_campaign_medium:"ମଧ୍ୟମ-ତୀବ୍ରତା ଅଭିଯାନ", legend_campaign_low:"କମ-ତୀବ୍ରତା ଅଭିଯାନ",
+  legend_report_high:"ଉଚ୍ଚ-ବିପଦ ରିପୋର୍ଟ", legend_report_other:"ଅନ୍ୟ ଲିଙ୍କ୍ ହୋଇଥିବା ରିପୋର୍ଟ"
 },
 ur: {
   login_eyebrow:"آپ SurakshaAI تک کیسے رسائی حاصل کر رہے ہیں منتخب کریں",
@@ -1751,7 +1841,11 @@ ur: {
   geo_hotspots_title:"سرفہرست مقامات (پچھلے 14 دن)", geo_no_data:"ابھی تک کوئی مقام کا ڈیٹا نہیں ہے",
   official_strip_text:"ہیکاتھون پروٹو ٹائپ — یہ بھارت سرکار کا سرکاری پلیٹ فارم نہیں ہے",
   footer_title:"SurakshaAI — ڈیجیٹل پبلک سیفٹی انٹیلیجنس",
-  footer_disclaimer:"ہیکاتھون پروٹو ٹائپ — یہ بھارت سرکار کا سرکاری پلیٹ فارم نہیں ہے۔ ہنگامی صورتحال میں، 1930 (نیشنل سائبر کرائم ہیلپ لائن) یا اپنے قریبی پولیس اسٹیشن سے رابطہ کریں۔"
+  footer_disclaimer:"ہیکاتھون پروٹو ٹائپ — یہ بھارت سرکار کا سرکاری پلیٹ فارم نہیں ہے۔ ہنگامی صورتحال میں، 1930 (نیشنل سائبر کرائم ہیلپ لائن) یا اپنے قریبی پولیس اسٹیشن سے رابطہ کریں۔",
+  section_fraud_network:"فراڈ نیٹ ورک گراف",
+  fraud_network_no_data:"ابھی تک کافی منسلک رپورٹس نہیں ہیں — ایک ہی نمبر یا پیٹرن شیئر کرنے والی 2+ رپورٹس والی مہمات یہاں منسلک گراف کے طور پر ظاہر ہوں گی۔",
+  legend_campaign_high:"زیادہ شدت کی مہم", legend_campaign_medium:"درمیانی شدت کی مہم", legend_campaign_low:"کم شدت کی مہم",
+  legend_report_high:"زیادہ خطرے کی رپورٹ", legend_report_other:"دیگر منسلک رپورٹ"
 }
 };
 
@@ -2774,9 +2868,113 @@ loadCommandCenter = async function(){
   }
 
   const reports = await getAllReports();
+  renderFraudNetwork(reports);
   renderGeoMap(reports, currencyReports);
   renderAnalyticsCharts(reports, currencyReports);
 };
+
+/* ============================================================
+   FRAUD NETWORK GRAPH (vis-network, no API key)
+   Reuses the same clusterReports() logic already powering the
+   Command Center's cluster table -- this is a visualization layer
+   on top of intelligence that's already being computed, not a
+   separate analysis pipeline. Two node tiers: campaign clusters
+   (hexagons, colored by severity) and the individual reported
+   numbers feeding into them (dots). Clusters sharing the same scam
+   type get a dashed cross-link, surfacing pattern overlap across
+   otherwise-separate campaigns.
+   ============================================================ */
+
+let fraudNetworkInstance = null;
+
+function maskNumberForGraph(num){
+  const digits = (num || "").replace(/\D/g, "");
+  if(digits.length < 6) return num || "?";
+  return digits.slice(0, 2) + "XXXXX" + digits.slice(-3);
+}
+
+function renderFraudNetwork(reports){
+  if(!window.vis) return;
+  const container = document.getElementById("fraud-network");
+  const emptyEl = document.getElementById("fraud-network-empty");
+  if(!container) return;
+
+  const clusters = clusterReports(reports);
+
+  if(clusters.length === 0){
+    container.style.display = "none";
+    if(emptyEl) emptyEl.style.display = "flex";
+    return;
+  }
+  container.style.display = "block";
+  if(emptyEl) emptyEl.style.display = "none";
+
+  const severityColor = { high: "#E23D28", medium: "#F0A93B", low: "#2BB673" };
+  const nodesArr = [];
+  const edgesArr = [];
+  const seenNumberNodes = new Set();
+
+  clusters.forEach(cluster => {
+    const clusterNodeId = "cluster_" + cluster.id;
+    nodesArr.push({
+      id: clusterNodeId,
+      label: cluster.id + "\n" + (cluster.scam_type || "Unclassified"),
+      shape: "hexagon",
+      color: { background: severityColor[cluster.severity] || "#F97316", border: "#00000022" },
+      font: { color: "#ffffff", size: 12, face: "Inter, sans-serif" },
+      size: 20 + Math.min(cluster.count * 3, 22)
+    });
+
+    cluster.reports.forEach(r => {
+      const numKey = normalizeNumber(r.number) || ("rep_" + r.id);
+      const nodeId = "num_" + numKey;
+      if(!seenNumberNodes.has(nodeId)){
+        seenNumberNodes.add(nodeId);
+        const dotColor = r.risk_level === "high" ? "#E23D28" : (r.risk_level === "medium" ? "#F0A93B" : "#78828E");
+        nodesArr.push({
+          id: nodeId,
+          label: (r.number && r.number !== "unknown") ? maskNumberForGraph(r.number) : "Unknown #",
+          shape: "dot",
+          color: { background: dotColor, border: "#00000022" },
+          font: { color: "#8C97B2", size: 10 },
+          size: 9
+        });
+      }
+      edgesArr.push({ from: nodeId, to: clusterNodeId, color: { color: "rgba(140,151,178,0.35)" }, width: 1.5 });
+    });
+  });
+
+  // cross-link clusters that share the same scam type -- surfaces
+  // pattern overlap even when campaigns don't share a phone number
+  for(let i = 0; i < clusters.length; i++){
+    for(let j = i + 1; j < clusters.length; j++){
+      if(clusters[i].scam_type && clusters[i].scam_type === clusters[j].scam_type){
+        edgesArr.push({
+          from: "cluster_" + clusters[i].id, to: "cluster_" + clusters[j].id,
+          dashes: true, width: 2, color: { color: "rgba(249,115,22,0.55)" }
+        });
+      }
+    }
+  }
+
+  const data = { nodes: new vis.DataSet(nodesArr), edges: new vis.DataSet(edgesArr) };
+  const options = {
+    autoResize: true,
+    physics: {
+      stabilization: { iterations: 150 },
+      barnesHut: { gravitationalConstant: -2600, springLength: 110, springConstant: 0.04 }
+    },
+    interaction: { hover: true, tooltipDelay: 150, zoomView: true, dragView: true },
+    edges: { smooth: { type: "continuous", roundness: 0.4 } },
+    nodes: { borderWidth: 1 }
+  };
+
+  if(fraudNetworkInstance){
+    fraudNetworkInstance.setData(data);
+  }else{
+    fraudNetworkInstance = new vis.Network(container, data, options);
+  }
+}
 
 /* ============================================================
    GEOSPATIAL INTELLIGENCE (Leaflet + OpenStreetMap, no API key)
