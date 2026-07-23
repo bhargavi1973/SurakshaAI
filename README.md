@@ -118,38 +118,7 @@ suraksha-ai/
 
 ## Architecture
 
-```mermaid
-    subgraph Users
-        CIT[Citizens]
-        OFF[Cyber Officials]
-    end
-
-    subgraph "SurakshaAI Web App — index.html"
-        CTOOLS[Citizen Tools<br/>Report + Voice + Currency Check]
-        CMD[Command Center<br/>Graph + Map + Analytics + Export]
-    end
-
-    subgraph "Serverless Functions"
-        LLM[/api/llm<br/>AI routing + vision/]
-        KV[/api/kv<br/>Report storage/]
-        AUTH[/api/auth<br/>Access control/]
-        TRANS[/api/transcribe<br/>Voice input/]
-    end
-
-    subgraph "External Services"
-        AI[AI Providers<br/>Groq · Gemini · Azure]
-        WHISPER[Groq Whisper<br/>Audio transcription]
-        REDIS[Upstash Redis<br/>Shared data store]
-    end
-
-    CIT --> CTOOLS
-    OFF --> CMD
-    CTOOLS --> LLM & KV & TRANS
-    CMD --> LLM & KV
-    LLM --> AI
-    TRANS --> WHISPER
-    KV --> REDIS
-```
+![](ArcitectureDiagram.png)
 
 Every citizen report — whether typed, spoken, or photographed — flows through `/api/llm` into the same classification logic and the same Upstash dataset that powers the Command Center. This is what makes the fraud network graph, geo map, and analytics dashboard reflect *one* intelligence picture instead of three siloed tools.
 
