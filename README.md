@@ -11,7 +11,7 @@
 [![Leaflet](https://img.shields.io/badge/maps-Leaflet-199900?logo=leaflet)](https://leafletjs.com)
 [![vis-network](https://img.shields.io/badge/graph-vis--network-8A2BE2)](https://visjs.github.io/vis-network/)
 
-**SurakshaAI** (Sanskrit: *surakṣā* — safety, protection) is an AI-powered digital public safety intelligence platform that sits between citizens and cyber officials — **screening digital arrest scams, counterfeit currency, and fraud rings at the point of contact**, not after the complaint is filed.
+**SurakshaAI** is an AI-powered digital public safety intelligence platform that sits between citizens and cyber officials :  **screening digital arrest scams, counterfeit currency, and fraud rings at the point of contact**, not after the complaint is filed.
 
 > 📖 Built as a hackathon prototype for *AI for Digital Public Safety: Defeating Counterfeiting, Fraud & Digital Arrest Scams*. This repository contains the actual buildable, deployable code.
 
